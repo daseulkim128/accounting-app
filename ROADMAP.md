@@ -4,6 +4,9 @@
 
 일본에 거주하는 고모님이 철거공사팀 경리 업무에 쓸 수 있도록 만든 월별 회계장부 웹앱입니다. Firebase Firestore를 데이터 저장소로 써서 어느 기기에서 접속해도 같은 데이터를 볼 수 있게 하는 것이 핵심 목표입니다.
 
+**배포 주소**: https://daseulkim128.github.io/accounting-app/ (GitHub Pages)
+**GitHub 저장소**: https://github.com/daseulkim128/accounting-app (public)
+
 ## 기술 스택
 
 - **HTML5 / CSS3 (Vanilla)**: 빌드 도구 없이 인라인 스타일로 작성
@@ -23,6 +26,7 @@
 7. **CSV 다운로드** — 현재 월 거래 내역을 엑셀에서 열 수 있는 CSV로 다운로드
 8. **샘플데이터 버튼** — 비어있으면 2026년 1~7월 예시 데이터 로드, 데이터가 있으면 전체 삭제(토글)
 9. **다크모드** — 테마 전환, 로컬 스토리지에 선호도 저장
+10. **거래 수정** — 행마다 "✏️ 수정" 버튼, 클릭하면 상단 입력 폼에 해당 거래 값이 채워지고 "수정 완료"/"취소" 모드로 전환 (별도 모달 없이 기존 입력 폼 재사용, Firestore 문서를 `update()`로 편집)
 
 ## 프로젝트 구조
 
@@ -30,6 +34,8 @@
 /
 ├── accounting.html          # 메인 회계장부 페이지
 ├── accounting-stats.html    # 통계 분석 페이지
+├── index.html                # GitHub Pages 루트 접속 시 accounting.html로 리다이렉트
+├── .gitignore                 # .claude/, .DS_Store 제외
 ├── ROADMAP.md                # 이 파일
 └── CLAUDE.md                 # Claude Code 작업 가이드
 ```
@@ -68,16 +74,26 @@
 - [x] 통계 페이지도 Firestore에서 직접 데이터 로드
 - [x] REST API로 읽기/쓰기/삭제 동작 검증
 
-### Phase 5: 배포 — 🔲 진행 예정
+### Phase 5: 배포 — ✅ 완료
 - [x] 프로젝트 폴더 정리 (포트폴리오 관련 파일 제거, 문서 정비)
-- [ ] GitHub 저장소 생성 및 push
-- [ ] GitHub Pages 활성화
+- [x] GitHub 저장소 생성 및 push (`daseulkim128/accounting-app`, public)
+- [x] GitHub Pages 활성화 — https://daseulkim128.github.io/accounting-app/
+- [x] 루트 URL 접속 시 `accounting.html`로 자동 이동하는 `index.html` 추가
 - [ ] 고모님께 배포 URL 공유 및 사용법 안내
 - [ ] 다른 기기/브라우저에서 동일 데이터 확인 (Firebase 연동 목적 최종 검증)
 
-### Phase 6: 운영 최적화 (선택) — 🔲 보류
-- [ ] Firestore 보안 규칙 강화 (현재는 테스트 모드 `allow read, write: if true;`)
-- [ ] 인증 추가 여부 검토 (고모님 혼자 사용하는 동안은 불필요할 수 있음)
+### Phase 6: 사용성 추가 개선 — ✅ 완료
+- [x] 거래 행별 수정 기능 (입력 폼 재사용, `db.collection("transactions").doc(id).update()`)
+
+### Phase 7: Firebase Authentication 연동 — 🔲 다음 작업
+고모님 외 다른 사람도 같은 앱을 쓸 경우 Firestore `transactions` 컬렉션이 공유되어 데이터가 섞이는 문제를 발견함 (현재는 `userId` 같은 소유자 구분 필드가 전혀 없고 보안 규칙도 `allow read, write: if true`). 사용자가 로그인 기반 분리(옵션 1)를 선택함.
+- [ ] Firebase Authentication 설정 (이메일/구글 로그인 등 방식 확정)
+- [ ] `transactions` 문서에 `userId` 필드 추가
+- [ ] 조회/추가/수정/삭제 쿼리에 로그인한 사용자 필터 적용 (`accounting.html`, `accounting-stats.html` 양쪽)
+- [ ] 보안 규칙을 `request.auth.uid` 기준으로 강화 (현재 테스트 모드 규칙 대체)
+- [ ] 기존 샘플데이터(작성자 구분 없음)를 어떻게 처리할지 결정 (고모님 계정으로 귀속 또는 삭제 후 재입력)
+
+### Phase 8: 운영 최적화 (선택) — 🔲 보류
 - [ ] 데이터 백업 정책 수립
 
 ## Firebase 설정 정보
@@ -128,13 +144,14 @@ Firebase 연동 과정에서 겪었던 문제와 원인 (같은 패턴의 오류
 2. **"함수가 정의되지 않음" 에러가 무관한 함수들에서까지 발생**: `loadSampleData()`의 `if/else` 블록에서 닫는 중괄호(`}`) 하나가 빠져 있었음. `<script>` 태그 하나에 구문 오류가 있으면 그 안의 모든 함수가 통째로 정의되지 않는다 — 브라우저가 파싱 단계에서 전체를 포기하기 때문. 중괄호 추가로 해결.
 3. **`The query requires an index`**: Firestore는 `where` 조건 2개 이상 + `orderBy`를 함께 쓰는 쿼리에 복합 색인을 요구한다. `orderBy("date")`를 쿼리에서 빼고 응답을 받은 뒤 JS에서 정렬하도록 바꿔서 색인 생성 없이 해결 (한 달치 데이터는 최대 수십 건이라 성능 영향 없음).
 4. **`downloadExcel()`이 존재하지 않는 데이터를 참조**: 연도별 구조로 리팩터링하기 전 코드가 남아 `accountingData[currentMonth]`를 읽고 있었음(연도 인덱스 누락). 화면에 표시 중인 캐시(`currentTransactions`)를 쓰도록 수정.
+5. **`git push` 시 `Invalid username or token. Password authentication is not supported`**: `gh auth login`으로 로그인은 되어 있었지만 git 자체의 credential helper가 그 토큰을 못 찾는 상태였음. `gh auth setup-git`을 실행해서 git이 gh의 인증 정보를 쓰도록 연결하면 해결된다.
 
 ## 주요 설계 결정
 
 | 항목 | 결정 | 이유 |
 |------|------|------|
 | 데이터 저장소 | Firebase Firestore | 고모님이 여러 기기에서 접속해도 같은 데이터를 보게 하기 위함 |
-| 인증 | 당분간 없음 (테스트 모드 규칙) | 고모님 혼자 사용하는 동안은 불필요, 필요시 나중에 추가 |
+| 인증 | Firebase Authentication 추가 예정 (Phase 7) | 다른 사람이 같은 앱을 쓰면 Firestore 데이터가 섞이는 문제 발견, 사용자별 분리를 위해 로그인 도입 결정 |
 | 월별 누적 | 전월 잔액 이월 방식 | 실제 회계 장부 방식과 일치 |
 | 통계 계산 | 순이익에서 이월금 제외 | 이월금을 포함하면 월별 실적 비교가 왜곡되어 순수 월별 수입/지출만 반영 |
 | 날짜 정렬 | Firestore `orderBy` 대신 클라이언트 정렬 | 복합 색인 생성 없이 즉시 동작하게 하기 위함 (위 트러블슈팅 3번 참고) |
@@ -142,4 +159,5 @@ Firebase 연동 과정에서 겪었던 문제와 원인 (같은 패턴의 오류
 ## 참고 사항
 
 - Firestore 관련 작업을 할 때는 `where` 다중 조건 + `orderBy` 조합이 복합 색인을 요구한다는 점을 유의한다.
-- 배포 완료 후에는 위 "Phase 5" 체크리스트와 실제 배포 URL을 이 문서에 업데이트한다.
+- git/배포 관련 세부 사항(홈 디렉토리 git 이슈, gh CLI 설정 등)은 CLAUDE.md의 "배포" 섹션 참고.
+- 코드 수정 후 배포에 반영하려면 `git add` → `git commit` → `git push`까지 해야 GitHub Pages에 자동 반영된다 (1~2분 소요).
