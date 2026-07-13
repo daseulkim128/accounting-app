@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회계 통계</title>
+    <title>会計統計(회계통계)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         /* 전체 페이지 기본 설정 */
@@ -277,16 +277,16 @@
         <!-- 페이지 헤더 -->
         <div class="header">
             <div style="display: flex; align-items: center; gap: 20px;">
-                <div class="title">📈 회계 통계</div>
+                <div class="title">📈 会計統計(회계통계)</div>
                 <div style="display: flex; gap: 10px;">
-                    <button class="back-btn" onclick="selectStatsYear(2024)">2024년</button>
-                    <button class="back-btn" onclick="selectStatsYear(2025)">2025년</button>
-                    <button class="back-btn" onclick="selectStatsYear(2026)">2026년</button>
-                    <span id="statsYearDisplay" style="font-weight: bold; color: white; margin-left: 10px;">2026년</span>
+                    <button class="back-btn" onclick="selectStatsYear(2024)">2024年</button>
+                    <button class="back-btn" onclick="selectStatsYear(2025)">2025年</button>
+                    <button class="back-btn" onclick="selectStatsYear(2026)">2026年</button>
+                    <span id="statsYearDisplay" style="font-weight: bold; color: white; margin-left: 10px;">2026年</span>
                 </div>
             </div>
             <div class="header-buttons">
-                <button class="back-btn" onclick="goBackToAccounting()">← 돌아가기</button>
+                <button class="back-btn" onclick="goBackToAccounting()">← 戻る(돌아가기)</button>
                 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
             </div>
         </div>
@@ -294,34 +294,34 @@
         <!-- 통계 카드 -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">총 수입</div>
-                <div class="stat-value" id="totalIncomeValue">0원</div>
+                <div class="stat-label">総収入(총수입)</div>
+                <div class="stat-value" id="totalIncomeValue">0円</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">총 지출</div>
-                <div class="stat-value" id="totalExpenseValue">0원</div>
+                <div class="stat-label">総支出(총지출)</div>
+                <div class="stat-value" id="totalExpenseValue">0円</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">순이익</div>
-                <div class="stat-value" id="netProfitValue">0원</div>
+                <div class="stat-label">純利益(순이익)</div>
+                <div class="stat-value" id="netProfitValue">0円</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">수익률</div>
+                <div class="stat-label">収益率(수익률)</div>
                 <div class="stat-value" id="profitRateValue">0%</div>
             </div>
         </div>
 
-        <!-- 월별 수입/지출 차트 -->
+        <!-- 月別 수입/지출 차트 -->
         <div class="chart-section">
-            <h3>📊 월별 수입/지출 현황</h3>
+            <h3>📊 月別収支状況(월별 수입/지출 현황)</h3>
             <div class="chart-container">
                 <canvas id="monthlyChart"></canvas>
             </div>
         </div>
 
-        <!-- 누적 수익 차트 -->
+        <!-- 누적 수익 추이 차트 -->
         <div class="chart-section">
-            <h3>📈 누적 수익 추이</h3>
+            <h3>📈 累積収益推移(누적 수익 추이)</h3>
             <div class="chart-container">
                 <canvas id="cumulativeChart"></canvas>
             </div>
@@ -329,7 +329,7 @@
 
         <!-- 지출 카테고리 분석 차트 -->
         <div class="chart-section">
-            <h3>💸 지출 카테고리 분석</h3>
+            <h3>💸 支出カテゴリー分析(지출 카테고리 분석)</h3>
             <div class="chart-container">
                 <canvas id="categoryChart"></canvas>
             </div>
@@ -337,15 +337,15 @@
 
         <!-- 월별 상세 통계 테이블 -->
         <div class="table-section">
-            <h3>📋 월별 상세 통계</h3>
+            <h3>📋 月別詳細統計(월별 상세 통계)</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>월</th>
-                        <th>수입</th>
-                        <th>지출</th>
-                        <th>순이익</th>
-                        <th>지출률</th>
+                        <th>月(월)</th>
+                        <th>収入(수입)</th>
+                        <th>支出(지출)</th>
+                        <th>純利益(순이익)</th>
+                        <th>支出率(지출률)</th>
                     </tr>
                 </thead>
                 <tbody id="monthlyTable">
@@ -354,62 +354,23 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script>
-        // ===== Firebase 초기화 =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyCM4RdunrPLGXW3AN2QX8q5oo_ppGlc9aA",
-            authDomain: "accounting-app-f1bca.firebaseapp.com",
-            projectId: "accounting-app-f1bca",
-            storageBucket: "accounting-app-f1bca.firebasestorage.app",
-            messagingSenderId: "580950547783",
-            appId: "1:580950547783:web:e0214f10ddf507dcfb0062",
-            measurementId: "G-6G21YEDHCG"
-        };
+        // ローカルストレージから会計データを取得
+        let accountingData = JSON.parse(localStorage.getItem('accountingData')) || {};
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Firestore에서 불러온 데이터를 { year: { month: [...] } } 형태로 캐시
-        let accountingData = {};
-
-        // 현재 선택된 년도
+        // 現在選択されている年度
         let currentYear = 2026;
 
-        // ===== Firestore에서 선택 연도 전체 데이터 로드 =====
-        async function loadAccountingDataFromFirestore(year) {
-            try {
-                const snapshot = await db.collection("transactions")
-                    .where("year", "==", year)
-                    .get();
+        // 月名配列
+        const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
-                const yearData = {};
-                snapshot.forEach((doc) => {
-                    const transaction = doc.data();
-                    if (!yearData[transaction.month]) {
-                        yearData[transaction.month] = [];
-                    }
-                    yearData[transaction.month].push({ id: doc.id, ...transaction });
-                });
+        // ===== データ計算関数 =====
 
-                accountingData[year] = yearData;
-            } catch (error) {
-                console.error("Firestore 통계 데이터 조회 실패:", error);
-                accountingData[year] = {};
-            }
-        }
-
-        // 월 이름 배열
-        const monthNames = ['', '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-
-        // ===== 데이터 계산 함수 =====
-
-        // 이전 월 마지막 잔액 계산
+        // 前月末残額を計算
         function getPreviousMonthBalance(month) {
             if (month <= 1) return 0;
 
-            const previousTransactions = accountingData[month - 1] || [];
+            const previousTransactions = (accountingData[currentYear] && accountingData[currentYear][month - 1]) || [];
             let balance = 0;
 
             previousTransactions.forEach(transaction => {
@@ -423,11 +384,11 @@
             return balance;
         }
 
-        // 월별 통계 계산 (이월금 제외)
+        // 月別統計を計算 (繰越金を除外)
         function calculateMonthlyStats() {
             const stats = {};
 
-            // 각 월에 대해 계산
+            // 各月について計算
             for (let month = 1; month <= 12; month++) {
                 const transactions = (accountingData[currentYear] && accountingData[currentYear][month]) || [];
                 let income = 0;
@@ -441,7 +402,7 @@
                     }
                 });
 
-                // 순이익 (이월금 제외 - 순수 월별 수입/지출만)
+                // 純利益 (繰越金を除外 - 純粋な月別収支のみ)
                 const monthProfit = income - expense;
 
                 stats[month] = {
@@ -455,7 +416,7 @@
             return stats;
         }
 
-        // 지출 카테고리 계산
+        // 支出カテゴリーを計算
         function calculateExpenseCategories() {
             const categories = {};
 
@@ -464,7 +425,7 @@
 
                 transactions.forEach(transaction => {
                     if (transaction.type === 'expense') {
-                        // 설명에서 카테고리 추출
+                        // 説明からカテゴリーを抽出
                         const category = extractCategory(transaction.desc);
                         if (!categories[category]) {
                             categories[category] = 0;
@@ -477,30 +438,30 @@
             return categories;
         }
 
-        // 설명에서 카테고리 추출
+        // 説明からカテゴリーを抽出
         function extractCategory(desc) {
             if (desc.includes('인건비') || desc.includes('일용직')) {
-                return '인건비';
+                return '人件費(인건비)';
             } else if (desc.includes('연료비') || desc.includes('연료')) {
-                return '연료비';
+                return '燃料費(연료비)';
             } else if (desc.includes('자재비') || desc.includes('자재')) {
-                return '자재비';
+                return '資材費(자재비)';
             } else if (desc.includes('장비')) {
-                return '장비비';
+                return '機材費(장비비)';
             } else if (desc.includes('보험')) {
-                return '보험료';
+                return '保険料(보험료)';
             } else if (desc.includes('사무') || desc.includes('통신')) {
-                return '사무비';
+                return '事務費(사무비)';
             } else if (desc.includes('차량') || desc.includes('유지')) {
-                return '차량유지비';
+                return '車両維持費(차량유지비)';
             } else if (desc.includes('안전')) {
-                return '안전용품';
+                return '安全用品費(안전용품)';
             } else {
-                return '기타';
+                return 'その他(기타)';
             }
         }
 
-        // 통계값 업데이트
+        // 統計値を更新
         function updateStatCards() {
             const stats = calculateMonthlyStats();
             let totalIncome = 0;
@@ -514,13 +475,13 @@
             const netProfit = totalIncome - totalExpense;
             const profitRate = totalIncome > 0 ? ((netProfit / totalIncome) * 100).toFixed(1) : 0;
 
-            document.getElementById('totalIncomeValue').innerText = totalIncome.toLocaleString() + '원';
-            document.getElementById('totalExpenseValue').innerText = totalExpense.toLocaleString() + '원';
-            document.getElementById('netProfitValue').innerText = netProfit.toLocaleString() + '원';
+            document.getElementById('totalIncomeValue').innerText = totalIncome.toLocaleString() + '円';
+            document.getElementById('totalExpenseValue').innerText = totalExpense.toLocaleString() + '円';
+            document.getElementById('netProfitValue').innerText = netProfit.toLocaleString() + '円';
             document.getElementById('profitRateValue').innerText = profitRate + '%';
         }
 
-        // 월별 테이블 업데이트
+        // 月別テーブルを更新
         function updateMonthlyTable() {
             const stats = calculateMonthlyStats();
             const tableBody = document.getElementById('monthlyTable');
@@ -531,16 +492,16 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><strong>${monthNames[month]}</strong></td>
-                    <td class="income-text">${stat.income.toLocaleString()}원</td>
-                    <td class="expense-text">${stat.expense.toLocaleString()}원</td>
-                    <td class="profit-text">${stat.profit.toLocaleString()}원</td>
+                    <td class="income-text">${stat.income.toLocaleString()}円</td>
+                    <td class="expense-text">${stat.expense.toLocaleString()}円</td>
+                    <td class="profit-text">${stat.profit.toLocaleString()}円</td>
                     <td>${stat.expenseRate}%</td>
                 `;
                 tableBody.appendChild(row);
             }
         }
 
-        // ===== 차트 생성 =====
+        // ===== チャート作成 =====
 
         let monthlyChartInstance;
         let cumulativeChartInstance;
@@ -570,14 +531,14 @@
                     labels: months,
                     datasets: [
                         {
-                            label: '수입',
+                            label: '収入(수입)',
                             data: incomeData,
                             backgroundColor: '#51cf66',
                             borderRadius: 5,
                             borderSkipped: false
                         },
                         {
-                            label: '지출',
+                            label: '支出(지출)',
                             data: expenseData,
                             backgroundColor: '#ff6b6b',
                             borderRadius: 5,
@@ -602,7 +563,7 @@
                             ticks: {
                                 color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333',
                                 callback: function(value) {
-                                    return (value / 1000000).toFixed(1) + 'M';
+                                    return (value / 10000).toFixed(1) + '万円';
                                 }
                             },
                             grid: {
@@ -630,7 +591,7 @@
 
             for (let month = 1; month <= 7; month++) {
                 months.push(monthNames[month]);
-                // 순이익만 누적 (이월금 제외)
+                // 純利益のみを累積 (繰越金を除外)
                 runningProfit += stats[month].profit;
                 cumulativeProfits.push(runningProfit);
             }
@@ -647,7 +608,7 @@
                     labels: months,
                     datasets: [
                         {
-                            label: '누적 순이익',
+                            label: '累積純利益(누적 순이익)',
                             data: cumulativeProfits,
                             borderColor: '#667eea',
                             backgroundColor: 'rgba(102, 126, 234, 0.1)',
@@ -678,7 +639,7 @@
                             ticks: {
                                 color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333',
                                 callback: function(value) {
-                                    return (value / 1000000).toFixed(1) + 'M';
+                                    return (value / 10000).toFixed(1) + '万円';
                                 }
                             },
                             grid: {
@@ -709,7 +670,7 @@
                 categoryChartInstance.destroy();
             }
 
-            // 차트 색상
+            // チャート色
             const colors = [
                 '#667eea', '#764ba2', '#51cf66', '#ff6b6b',
                 '#ffd43b', '#ff8c42', '#00d4ff', '#9c27b0'
@@ -745,7 +706,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.label + ': ' + context.parsed.toLocaleString() + '원';
+                                    return context.label + ': ' + context.parsed.toLocaleString() + '円';
                                 }
                             }
                         }
@@ -754,14 +715,14 @@
             });
         }
 
-        // ===== 년도 선택 함수 =====
-        async function selectStatsYear(year) {
+        // ===== 年度選択関数 =====
+        function selectStatsYear(year) {
             currentYear = year;
-            document.getElementById('statsYearDisplay').innerText = year + '년';
-            await refreshStats();
+            document.getElementById('statsYearDisplay').innerText = year + '年';
+            refreshStats();
         }
 
-        // ===== 테마 토글 =====
+        // ===== テーマ切り替え =====
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
@@ -771,21 +732,20 @@
                 localStorage.setItem('theme', 'light');
             }
 
-            // 차트 다시 그리기 (텍스트 색상 변경 반영)
+            // チャートを再描画 (テキスト色の変更を反映)
             createMonthlyChart();
             createCumulativeChart();
             createCategoryChart();
         }
 
-        // ===== 뒤로가기 =====
+        // ===== 戻る =====
 
         function goBackToAccounting() {
             window.location.href = 'accounting.html';
         }
 
-        // ===== 통계 업데이트 함수 =====
-        async function refreshStats() {
-            await loadAccountingDataFromFirestore(currentYear);
+        // ===== 統計を更新する関数 =====
+        function refreshStats() {
             updateStatCards();
             updateMonthlyTable();
             createMonthlyChart();
@@ -793,27 +753,27 @@
             createCategoryChart();
         }
 
-        // ===== 페이지 로드 시 초기화 =====
+        // ===== ページ読み込み時の初期化 =====
 
-        window.addEventListener('load', async function() {
-            // 저장된 테마 설정 불러오기
+        window.addEventListener('load', function() {
+            // 保存されたテーマ設定を読み込み
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
             }
 
-            // 통계값 업데이트
-            await refreshStats();
+            // 統計値を更新
+            refreshStats();
 
-            // 페이지 포커스가 돌아올 때 데이터 다시 로드
+            // ページがフォーカスを取り戻すときにデータを再ロード
             document.addEventListener('visibilitychange', function() {
                 if (!document.hidden) {
-                    // 페이지가 다시 보일 때 최신 데이터로 업데이트
+                    // ページが再び表示されるときに最新データで更新
                     refreshStats();
                 }
             });
 
-            // 창 포커스 돌아올 때도 데이터 다시 로드
+            // ウィンドウがフォーカスを取り戻すときもデータを再ロード
             window.addEventListener('focus', function() {
                 refreshStats();
             });

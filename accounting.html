@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회계장부</title>
+    <title>会計帳簿(회계장부)</title>
     <style>
         /* 전체 페이지 기본 설정 */
         * {
@@ -401,33 +401,6 @@
             box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
         }
 
-        /* 행 수정 버튼 */
-        .edit-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-
-        /* 수정 중인 행 강조 */
-        table tbody tr.editing-row {
-            background: rgba(255, 193, 7, 0.15);
-        }
-
-        body.dark-mode table tbody tr.editing-row {
-            background: rgba(255, 193, 7, 0.1);
-        }
-
         /* 체크박스 스타일 */
         input[type="checkbox"] {
             width: 18px;
@@ -489,11 +462,11 @@
     <div class="container">
         <!-- 페이지 헤더 -->
         <div class="header">
-            <div class="title">📊 회계장부</div>
+            <div class="title">📊 会計帳簿(회계장부)</div>
             <div class="header-buttons">
-                <button class="download-btn" onclick="downloadExcel()">📥 엑셀 다운로드</button>
-                <button class="download-btn" onclick="goToStats()">📈 통계</button>
-                <button class="download-btn" onclick="loadSampleData()" style="background: #ff8c42;">📋 샘플데이터</button>
+                <button class="download-btn" onclick="downloadExcel()">📥 エクセルダウンロード(엑셀다운로드)</button>
+                <button class="download-btn" onclick="goToStats()">📈 統計(통계)</button>
+                <button class="download-btn" onclick="loadSampleData()" style="background: #ff8c42;">📋 サンプルデータ(샘플데이터)</button>
                 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
             </div>
         </div>
@@ -502,100 +475,97 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap;">
             <!-- 년도 선택 -->
             <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="month-btn" onclick="selectYear(2024)">2024년</button>
-                <button class="month-btn" onclick="selectYear(2025)">2025년</button>
-                <button class="month-btn active" onclick="selectYear(2026)">2026년</button>
-                <span id="yearDisplay" style="font-weight: bold; color: #667eea; margin-left: 10px;">2026년</span>
+                <button class="month-btn" onclick="selectYear(2024)">2024年</button>
+                <button class="month-btn" onclick="selectYear(2025)">2025年</button>
+                <button class="month-btn active" onclick="selectYear(2026)">2026年</button>
+                <span id="yearDisplay" style="font-weight: bold; color: #667eea; margin-left: 10px;">2026年</span>
             </div>
         </div>
 
         <!-- 월 선택 버튼들 -->
         <div class="month-selector">
-            <button class="month-btn active" onclick="selectMonth(1)">1월</button>
-            <button class="month-btn" onclick="selectMonth(2)">2월</button>
-            <button class="month-btn" onclick="selectMonth(3)">3월</button>
-            <button class="month-btn" onclick="selectMonth(4)">4월</button>
-            <button class="month-btn" onclick="selectMonth(5)">5월</button>
-            <button class="month-btn" onclick="selectMonth(6)">6월</button>
-            <button class="month-btn" onclick="selectMonth(7)">7월</button>
-            <button class="month-btn" onclick="selectMonth(8)">8월</button>
-            <button class="month-btn" onclick="selectMonth(9)">9월</button>
-            <button class="month-btn" onclick="selectMonth(10)">10월</button>
-            <button class="month-btn" onclick="selectMonth(11)">11월</button>
-            <button class="month-btn" onclick="selectMonth(12)">12월</button>
+            <button class="month-btn active" onclick="selectMonth(1)">1月</button>
+            <button class="month-btn" onclick="selectMonth(2)">2月</button>
+            <button class="month-btn" onclick="selectMonth(3)">3月</button>
+            <button class="month-btn" onclick="selectMonth(4)">4月</button>
+            <button class="month-btn" onclick="selectMonth(5)">5月</button>
+            <button class="month-btn" onclick="selectMonth(6)">6月</button>
+            <button class="month-btn" onclick="selectMonth(7)">7月</button>
+            <button class="month-btn" onclick="selectMonth(8)">8月</button>
+            <button class="month-btn" onclick="selectMonth(9)">9月</button>
+            <button class="month-btn" onclick="selectMonth(10)">10月</button>
+            <button class="month-btn" onclick="selectMonth(11)">11月</button>
+            <button class="month-btn" onclick="selectMonth(12)">12月</button>
         </div>
 
         <!-- 데이터 입력 섹션 -->
         <div class="input-section">
-            <h3>💰 거래 입력</h3>
+            <h3>💰 取引入力(거래입력)</h3>
             <div class="form-group" style="grid-template-columns: 0.8fr 0.8fr 0.8fr 1fr 1fr auto; gap: 8px;">
                 <!-- 연도 선택 -->
                 <select id="transactionYear" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                    <option value="">연도</option>
+                    <option value="">年度(연도)</option>
                 </select>
 
                 <!-- 월 선택 -->
                 <select id="transactionMonth" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                    <option value="">월</option>
+                    <option value="">月(월)</option>
                 </select>
 
                 <!-- 일 선택 -->
                 <select id="transactionDay" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                    <option value="">일</option>
+                    <option value="">日(일)</option>
                 </select>
 
                 <!-- 거래 유형 선택 (수입/지출) -->
                 <select id="transactionType">
-                    <option value="income">수입</option>
-                    <option value="expense">지출</option>
+                    <option value="income">収入(수입)</option>
+                    <option value="expense">支出(지출)</option>
                 </select>
 
                 <!-- 금액 입력 -->
                 <input
                     type="text"
                     id="transactionAmount"
-                    placeholder="금액"
+                    placeholder="金額(금액)"
                     oninput="formatAmountInput(this)"
                 >
 
-                <!-- 추가/수정 버튼 -->
-                <button class="add-btn" id="submitBtn" onclick="addTransaction()">추가</button>
+                <!-- 추가 버튼 -->
+                <button class="add-btn" onclick="addTransaction()">追加(추가)</button>
             </div>
 
             <!-- 거래 설명 -->
-            <div style="margin-top: 15px; display: flex; gap: 8px;">
+            <div style="margin-top: 15px;">
                 <input
                     type="text"
                     id="transactionDesc"
-                    placeholder="설명 (예: 월급, 식비)"
-                    style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                    placeholder="説明(설명) (例:人件費、燃料費)"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
                 >
-                <!-- 수정 모드일 때만 표시되는 취소 버튼 -->
-                <button class="delete-btn" id="cancelEditBtn" onclick="cancelEdit()" style="display: none; background: #999;">취소</button>
             </div>
         </div>
 
         <!-- 거래 내역 테이블 -->
         <div class="table-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin: 0;">📋 거래 내역</h3>
-                <button class="delete-btn" id="deleteSelectedBtn" onclick="deleteSelected()" style="display: none; background: #ff6b6b;">🗑️ 선택 삭제</button>
+                <h3 style="margin: 0;">📋 取引履歴(거래내역)</h3>
+                <button class="delete-btn" id="deleteSelectedBtn" onclick="deleteSelected()" style="display: none; background: #ff6b6b;">🗑️ 選択削除(선택삭제)</button>
             </div>
             <table id="transactionTable">
                 <thead>
                     <tr>
                         <th style="width: 40px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
-                        <th>날짜</th>
-                        <th>수입</th>
-                        <th>지출</th>
-                        <th>잔액</th>
-                        <th>설명</th>
-                        <th>수정</th>
+                        <th>日付(날짜)</th>
+                        <th>収入(수입)</th>
+                        <th>支出(지출)</th>
+                        <th>残高(잔액)</th>
+                        <th>説明(설명)</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     <tr>
-                        <td colspan="7" class="empty-message">거래 내역이 없습니다. 거래를 입력해주세요.</td>
+                        <td colspan="6" class="empty-message">取引履歴がありません。取引を入力してください。(거래 내역이 없습니다. 거래를 입력해주세요.)</td>
                     </tr>
                 </tbody>
             </table>
@@ -604,114 +574,82 @@
         <!-- 월말 합계 섹션 -->
         <div class="summary-section">
             <div class="summary-card total-income">
-                <div class="summary-label">이달 수입</div>
-                <div class="summary-value" id="totalIncome">0원</div>
+                <div class="summary-label">今月収入(이달 수입)</div>
+                <div class="summary-value" id="totalIncome">0円</div>
             </div>
             <div class="summary-card total-expense">
-                <div class="summary-label">이달 지출</div>
-                <div class="summary-value" id="totalExpense">0원</div>
+                <div class="summary-label">今月支出(이달 지출)</div>
+                <div class="summary-value" id="totalExpense">0円</div>
             </div>
             <div class="summary-card total-balance">
-                <div class="summary-label">월말 잔액</div>
-                <div class="summary-value" id="totalBalance">0원</div>
+                <div class="summary-label">月末残高(월말 잔액)</div>
+                <div class="summary-value" id="totalBalance">0円</div>
             </div>
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script>
-        // ===== Firebase 초기화 =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyCM4RdunrPLGXW3AN2QX8q5oo_ppGlc9aA",
-            authDomain: "accounting-app-f1bca.firebaseapp.com",
-            projectId: "accounting-app-f1bca",
-            storageBucket: "accounting-app-f1bca.firebasestorage.app",
-            messagingSenderId: "580950547783",
-            appId: "1:580950547783:web:e0214f10ddf507dcfb0062",
-            measurementId: "G-6G21YEDHCG"
-        };
+        // ===== 会計帳簿 データ管理 =====
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // ローカルストレージに保存された取引データを取得
+        // 構造: { year: { month: [{ date, type, amount, desc }] } }
+        let accountingData = JSON.parse(localStorage.getItem('accountingData')) || {};
 
-        // ===== 회계장부 데이터 관리 =====
-
-        // 현재 선택된 년도와 월
+        // 現在選択されている年度と月
         let currentYear = new Date().getFullYear();
         let currentMonth = 1;
 
-        // 화면에 표시 중인 현재 월 거래 캐시 (삭제/다운로드 시 재사용)
-        let currentTransactions = [];
-
-        // 현재 수정 중인 거래의 Firestore 문서 id (null이면 '추가' 모드)
-        let editingTransactionId = null;
-
-        // ===== 년도 선택 함수 =====
-        async function selectYear(year) {
+        // ===== 年度選択関数 =====
+        function selectYear(year) {
             currentYear = year;
 
-            // 년도 버튼 active 클래스 업데이트
+            // 年度ボタン active クラス更新
             document.querySelectorAll('.month-selector ~ div button').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
 
-            // 년도 표시 업데이트
-            document.getElementById('yearDisplay').innerText = year + '년';
+            // 年度表示更新
+            document.getElementById('yearDisplay').innerText = year + '年';
 
-            // 선택된 년도/월의 거래 내역 표시
-            await displayTransactions();
+            // 選択された年度/月の取引履歴を表示
+            displayTransactions();
         }
 
-        // ===== 월 선택 함수 =====
-        async function selectMonth(month) {
-            // 현재 월 업데이트
+        // ===== 月選択関数 =====
+
+        // ユーザーが月ボタンをクリックしたときに実行
+        function selectMonth(month) {
+            // 現在の月を更新
             currentMonth = month;
 
-            // 이전 선택된 버튼의 'active' 클래스 제거
+            // 前に選択されたボタンの'active'クラスを削除
             document.querySelectorAll('.month-selector .month-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // 새로 선택된 버튼에 'active' 클래스 추가
+            // 新しく選択されたボタンに'active'クラスを追加
             event.target.classList.add('active');
 
-            // 선택된 월의 거래 내역 표시
-            await displayTransactions();
+            // 選択された月の取引履歴を表示
+            displayTransactions();
         }
 
-        // ===== Firestore에서 데이터 로드 =====
-        async function loadTransactionsFromFirestore(year, month) {
-            try {
-                // year+month 이중 조건에 orderBy까지 걸면 Firestore 복합 색인이 필요해지므로,
-                // 정렬은 결과를 받은 뒤 클라이언트에서 처리한다 (한 달치라 데이터량이 적어 부담 없음)
-                const snapshot = await db.collection("transactions")
-                    .where("year", "==", year)
-                    .where("month", "==", month)
-                    .get();
-
-                const transactions = [];
-                snapshot.forEach((doc) => {
-                    transactions.push({ id: doc.id, ...doc.data() });
-                });
-
-                transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                return transactions;
-            } catch (error) {
-                console.error("Firestore 조회 실패:", error);
-                alert('데이터를 불러오는 중 오류가 발생했습니다: ' + error.message);
-                return [];
+        // ===== 日付順ソート関数 =====
+        function sortTransactionsByDate(year, month) {
+            if (accountingData[year] && accountingData[year][month]) {
+                accountingData[year][month].sort((a, b) =>
+                    new Date(a.date) - new Date(b.date)
+                );
             }
         }
 
-        // ===== 금액 실시간 포맷팅 함수 =====
+        // ===== 金額リアルタイムフォーマット関数 =====
         function formatAmountInput(input) {
-            // 숫자만 추출
+            // 数字のみ抽出
             let value = input.value.replace(/[^\d]/g, '');
 
-            // 컴마 추가
+            // コンマを追加
             if (value) {
                 value = parseInt(value).toLocaleString();
             }
@@ -719,42 +657,44 @@
             input.value = value;
         }
 
-        // ===== 선택 박스 초기화 함수 =====
+        // ===== 選択ボックス初期化関数 =====
         function initializeDateSelectors() {
-            // 연도 셀렉트 박스 채우기 (2025-2035)
+            // 年度セレクトボックスを埋める (2025-2035)
             const yearSelect = document.getElementById('transactionYear');
-            yearSelect.innerHTML = '<option value="">연도</option>';
+            yearSelect.innerHTML = '<option value="">年度(연도)</option>';
             for (let year = 2025; year <= 2035; year++) {
                 const option = document.createElement('option');
                 option.value = year;
-                option.text = year + '년';
+                option.text = year + '年';
                 yearSelect.appendChild(option);
             }
 
-            // 월 셀렉트 박스 채우기
+            // 月セレクトボックスを埋める
             const monthSelect = document.getElementById('transactionMonth');
-            monthSelect.innerHTML = '<option value="">월</option>';
+            monthSelect.innerHTML = '<option value="">月(월)</option>';
             for (let month = 1; month <= 12; month++) {
                 const option = document.createElement('option');
                 option.value = month.toString().padStart(2, '0');
-                option.text = month + '월';
+                option.text = month + '月';
                 monthSelect.appendChild(option);
             }
 
-            // 일 셀렉트 박스 채우기
+            // 日セレクトボックスを埋める
             const daySelect = document.getElementById('transactionDay');
-            daySelect.innerHTML = '<option value="">일</option>';
+            daySelect.innerHTML = '<option value="">日(일)</option>';
             for (let day = 1; day <= 31; day++) {
                 const option = document.createElement('option');
                 option.value = day.toString().padStart(2, '0');
-                option.text = day + '일';
+                option.text = day + '日';
                 daySelect.appendChild(option);
             }
         }
 
-        // ===== 거래 추가 함수 =====
-        async function addTransaction() {
-            // 입력 필드에서 값 가져오기
+        // ===== 取引追加関数 =====
+
+        // ユーザーが取引を入力して「追加」ボタンをクリックしたとき
+        function addTransaction() {
+            // 入力フィールドから値を取得
             const year = parseInt(document.getElementById('transactionYear').value);
             const month = parseInt(document.getElementById('transactionMonth').value);
             const day = parseInt(document.getElementById('transactionDay').value);
@@ -762,132 +702,83 @@
             const amountText = document.getElementById('transactionAmount').value;
             const desc = document.getElementById('transactionDesc').value;
 
-            // 입력값 검증 (모든 필드가 채워졌는지 확인)
+            // 入力値の検証 (すべてのフィールドが入力されているか確認)
             if (!year || !month || !day || !amountText || !desc) {
-                alert('모든 필드를 입력해주세요!');
+                alert('すべての項目を入力してください！(모든 항목을 입력해주세요!)');
                 return;
             }
 
-            // 연도 검증
+            // 年度検証
             if (year !== currentYear) {
-                alert(`현재 선택된 연도는 ${currentYear}년입니다.\n${year}년 데이터는 입력할 수 없습니다.`);
+                alert(`現在選択されている年度は${currentYear}年です。\n${year}年のデータは入力できません。(현재 선택된 연도는 ${currentYear}년입니다.\n${year}년 데이터는 입력할 수 없습니다.)`);
                 return;
             }
 
-            // 월 검증
+            // 月検証
             if (month !== currentMonth) {
-                alert(`현재 선택된 월은 ${currentMonth}월입니다.\n${month}월 데이터는 입력할 수 없습니다.`);
+                alert(`現在選択されている月は${currentMonth}月です。\n${month}月のデータは入力できません。(현재 선택된 월은 ${currentMonth}월입니다.\n${month}월 데이터는 입력할 수 없습니다.)`);
                 return;
             }
 
-            // 금액 파싱 (컴마 제거)
+            // 金額解析 (コンマを削除)
             const amount = parseFloat(amountText.replace(/,/g, ''));
 
-            // 금액이 0 이상인지 확인
+            // 金額が0以上であることを確認
             if (amount <= 0) {
-                alert('금액은 0보다 커야 합니다!');
+                alert('金額は0より大きくしてください！(금액은 0보다 커야 합니다!)');
                 return;
             }
 
-            // 날짜 조합 (YYYY-MM-DD 형식)
+            // 日付組み合わせ (YYYY-MM-DD形式)
             const date = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
-            const transactionData = {
-                year: year,
-                month: month,
+            // 対応する年度がない場合は作成
+            if (!accountingData[currentYear]) {
+                accountingData[currentYear] = {};
+            }
+
+            // 対応する月がデータ構造にない場合は空の配列で初期化
+            if (!accountingData[currentYear][currentMonth]) {
+                accountingData[currentYear][currentMonth] = [];
+            }
+
+            // 新しい取引を現在の月の配列に追加
+            accountingData[currentYear][currentMonth].push({
                 date: date,
                 type: type,
-                amount: amount,
+                amount: parseFloat(amount),
                 desc: desc
-            };
+            });
 
-            try {
-                if (editingTransactionId) {
-                    // 수정 모드: 기존 문서 업데이트
-                    await db.collection("transactions").doc(editingTransactionId).update(transactionData);
-                } else {
-                    // 추가 모드: 새 문서 생성
-                    transactionData.createdAt = new Date();
-                    await db.collection("transactions").add(transactionData);
-                }
+            // 日付順でソート
+            sortTransactionsByDate(currentYear, currentMonth);
 
-                const wasEditing = editingTransactionId !== null;
+            // データをローカルストレージに保存
+            localStorage.setItem('accountingData', JSON.stringify(accountingData));
 
-                // 입력 필드 및 수정 상태 초기화
-                resetTransactionForm();
-
-                // 거래 내역 다시 로드
-                await displayTransactions();
-
-                alert(wasEditing ? '거래가 수정되었습니다! ✅' : '거래가 저장되었습니다! ✅');
-            } catch (error) {
-                console.error("Firestore 저장 실패:", error);
-                alert('저장 중 오류가 발생했습니다: ' + error.message);
-            }
-        }
-
-        // ===== 행 수정 시작 =====
-        function startEditTransaction(id) {
-            const transaction = currentTransactions.find(t => t.id === id);
-            if (!transaction) return;
-
-            editingTransactionId = id;
-
-            // 입력 필드에 기존 값 채우기
-            const dateObj = new Date(transaction.date + 'T00:00:00');
-            document.getElementById('transactionYear').value = dateObj.getFullYear();
-            document.getElementById('transactionMonth').value = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-            document.getElementById('transactionDay').value = dateObj.getDate().toString().padStart(2, '0');
-            document.getElementById('transactionType').value = transaction.type;
-            document.getElementById('transactionAmount').value = transaction.amount.toLocaleString();
-            document.getElementById('transactionDesc').value = transaction.desc;
-
-            // 버튼을 수정 모드로 전환
-            document.getElementById('submitBtn').innerText = '수정 완료';
-            document.getElementById('cancelEditBtn').style.display = 'block';
-
-            // 수정 중인 행 강조 표시
-            document.querySelectorAll('#tableBody tr').forEach(row => row.classList.remove('editing-row'));
-            const targetRow = document.querySelector(`[data-transaction-id="${id}"]`);
-            if (targetRow) {
-                targetRow.classList.add('editing-row');
-                targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-
-            // 입력 폼으로 스크롤
-            document.querySelector('.input-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        // ===== 수정 취소 =====
-        function cancelEdit() {
-            resetTransactionForm();
-        }
-
-        // ===== 입력 폼 및 수정 상태 초기화 =====
-        function resetTransactionForm() {
-            editingTransactionId = null;
+            // 入力フィールドを初期化 (次の入力のためにクリア)
             document.getElementById('transactionYear').value = '';
             document.getElementById('transactionMonth').value = '';
             document.getElementById('transactionDay').value = '';
             document.getElementById('transactionAmount').value = '';
             document.getElementById('transactionDesc').value = '';
-            document.getElementById('submitBtn').innerText = '추가';
-            document.getElementById('cancelEditBtn').style.display = 'none';
-            document.querySelectorAll('#tableBody tr').forEach(row => row.classList.remove('editing-row'));
+
+            // 取引履歴テーブルを再描画
+            displayTransactions();
         }
 
-        // ===== 이전 월 마지막 잔액 계산 =====
-        async function getPreviousMonthBalance(year, month) {
+        // ===== 前月末残額計算 =====
+        function getPreviousMonthBalance(year, month) {
             let previousYear = year;
             let previousMonth = month - 1;
 
-            // 1월이면 전년도 12월
+            // 1月の場合は前年度12月
             if (previousMonth < 1) {
                 previousYear = year - 1;
                 previousMonth = 12;
             }
 
-            const previousTransactions = await loadTransactionsFromFirestore(previousYear, previousMonth);
+            const previousTransactions = (accountingData[previousYear] && accountingData[previousYear][previousMonth]) || [];
             let balance = 0;
 
             previousTransactions.forEach(transaction => {
@@ -901,83 +792,83 @@
             return balance;
         }
 
-        // ===== 거래 내역 표시 함수 =====
-        async function displayTransactions() {
-            // 테이블 바디 선택
+        // ===== 取引履歴表示関数 =====
+
+        // 現在の月の取引履歴をテーブルに表示
+        function displayTransactions() {
+            // テーブルボディを選択
             const tableBody = document.getElementById('tableBody');
             const selectAll = document.getElementById('selectAll');
 
-            // Firestore에서 데이터 로드
-            const transactions = await loadTransactionsFromFirestore(currentYear, currentMonth);
-            currentTransactions = transactions;
+            // レンダリング前にデータをソート (常に最新の状態を保つ)
+            sortTransactionsByDate(currentYear, currentMonth);
 
-            // 전체 선택 체크박스 초기화
+            // 現在の月の取引データを取得
+            const transactions = (accountingData[currentYear] && accountingData[currentYear][currentMonth]) || [];
+
+            // すべて選択チェックボックスを初期化
             selectAll.checked = false;
 
-            // 전월 잔액 이월
-            const previousBalance = await getPreviousMonthBalance(currentYear, currentMonth);
-
-            // 거래가 없으면 빈 상태 메시지 표시
+            // 取引がない場合は空の状態メッセージを表示
             if (transactions.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="empty-message">거래 내역이 없습니다. 거래를 입력해주세요.</td></tr>';
-                updateSummary(transactions, previousBalance);
+                tableBody.innerHTML = '<tr><td colspan="7" class="empty-message">取引履歴がありません。取引を入力してください。(거래 내역이 없습니다. 거래를 입력해주세요.)</td></tr>';
+                updateSummary();
                 updateDeleteButton();
                 return;
             }
 
-            // 테이블 내용 초기화
+            // テーブル内容を初期化
             tableBody.innerHTML = '';
 
+            // 前月残額を繰越
+            const previousBalance = getPreviousMonthBalance(currentYear, currentMonth);
             let runningBalance = previousBalance;
 
-            // 전월 잔액이 있으면 첫 행에 이월금 표시
+            // 前月残額がある場合は最初の行に繰越金を表示
             if (previousBalance !== 0) {
                 const carryOverRow = document.createElement('tr');
                 carryOverRow.classList.add('carryover-row');
                 carryOverRow.innerHTML = `
                     <td></td>
-                    <td style="color: #667eea;">📌 월초 이월금</td>
+                    <td style="color: #667eea;">📌 月初繰越金(월초 이월금)</td>
                     <td></td>
                     <td></td>
-                    <td class="balance" style="color: #667eea;">${previousBalance.toLocaleString()}원</td>
-                    <td style="color: #888;">전월 이월</td>
-                    <td></td>
+                    <td class="balance" style="color: #667eea;">${previousBalance.toLocaleString()}円</td>
+                    <td style="color: #888;">前月繰越(전월 이월)</td>
                 `;
                 tableBody.appendChild(carryOverRow);
             }
 
-            // 각 거래에 대해 테이블 행 생성
+            // 各取引についてテーブル行を作成
             transactions.forEach((transaction, index) => {
-                // 거래 유형에 따라 잔액 계산
+                // 取引タイプに応じて残額を計算
                 if (transaction.type === 'income') {
-                    // 수입이면 잔액 증가
+                    // 収入の場合は残額を増加
                     runningBalance += transaction.amount;
                 } else {
-                    // 지출이면 잔액 감소
+                    // 支出の場合は残額を減少
                     runningBalance -= transaction.amount;
                 }
 
-                // 테이블 행 생성
+                // テーブル行を作成
                 const row = document.createElement('tr');
                 row.setAttribute('data-index', index);
-                row.setAttribute('data-transaction-id', transaction.id);
 
-                // 날짜를 보기 좋은 형식으로 변환 (2024-01-15 → 1월 15일)
+                // 日付を見やすい形式に変換 (2024-01-15 → 1月15日)
                 const dateObj = new Date(transaction.date + 'T00:00:00');
-                const formattedDate = (dateObj.getMonth() + 1) + '월 ' + dateObj.getDate() + '일';
+                const formattedDate = (dateObj.getMonth() + 1) + '月' + dateObj.getDate() + '日';
 
-                // 행의 HTML 작성 (체크박스 추가)
+                // 行のHTML作成 (チェックボックスを追加)
                 row.innerHTML = `
                     <td><input type="checkbox" class="row-checkbox" onchange="updateDeleteButton()"></td>
                     <td>${formattedDate}</td>
-                    <td class="${transaction.type === 'income' ? 'income' : ''}">${transaction.type === 'income' ? transaction.amount.toLocaleString() + '원' : ''}</td>
-                    <td class="${transaction.type === 'expense' ? 'expense' : ''}">${transaction.type === 'expense' ? transaction.amount.toLocaleString() + '원' : ''}</td>
-                    <td class="balance">${runningBalance.toLocaleString()}원</td>
+                    <td class="${transaction.type === 'income' ? 'income' : ''}">${transaction.type === 'income' ? transaction.amount.toLocaleString() + '円' : ''}</td>
+                    <td class="${transaction.type === 'expense' ? 'expense' : ''}">${transaction.type === 'expense' ? transaction.amount.toLocaleString() + '円' : ''}</td>
+                    <td class="balance">${runningBalance.toLocaleString()}円</td>
                     <td class="description-column">${transaction.desc}</td>
-                    <td><button class="edit-btn" onclick="startEditTransaction('${transaction.id}')">✏️ 수정</button></td>
                 `;
 
-                // 체크박스 클릭 시 행 강조 표시
+                // チェックボックスクリック時に行を強調表示
                 const checkbox = row.querySelector('.row-checkbox');
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
@@ -987,16 +878,16 @@
                     }
                 });
 
-                // 테이블에 행 추가
+                // テーブルに行を追加
                 tableBody.appendChild(row);
             });
 
-            // 월말 합계 업데이트
-            updateSummary(transactions, previousBalance);
+            // 月末合計を更新
+            updateSummary();
             updateDeleteButton();
         }
 
-        // ===== 전체 선택 토글 =====
+        // ===== すべて選択トグル =====
         function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll');
             const checkboxes = document.querySelectorAll('.row-checkbox');
@@ -1014,7 +905,7 @@
             updateDeleteButton();
         }
 
-        // ===== 선택 삭제 버튼 업데이트 =====
+        // ===== 選択削除ボタン更新 =====
         function updateDeleteButton() {
             const checkboxes = document.querySelectorAll('.row-checkbox');
             const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
@@ -1022,87 +913,92 @@
 
             if (selectedCount > 0) {
                 deleteBtn.style.display = 'block';
-                deleteBtn.innerText = `🗑️ 선택 삭제 (${selectedCount}개)`;
+                deleteBtn.innerText = `🗑️ 選択削除(선택삭제) (${selectedCount}件)`;
             } else {
                 deleteBtn.style.display = 'none';
             }
         }
 
-        // ===== 선택된 항목 일괄 삭제 =====
-        async function deleteSelected() {
+        // ===== 選択項目一括削除 =====
+        function deleteSelected() {
             const selectedCount = Array.from(document.querySelectorAll('.row-checkbox'))
                 .filter(cb => cb.checked).length;
 
             if (selectedCount === 0) {
-                alert('삭제할 항목을 선택해주세요!');
+                alert('削除する項目を選択してください！(삭제할 항목을 선택해주세요!)');
                 return;
             }
 
-            if (confirm(`${selectedCount}개의 거래를 삭제하시겠습니까?`)) {
-                try {
-                    const checkboxes = document.querySelectorAll('.row-checkbox');
-                    const batch = db.batch();
-                    let deleteCount = 0;
+            if (confirm(`${selectedCount}件の取引を削除しますか？(${selectedCount}개의 거래를 삭제하시겠습니까?)`)) {
+                const checkboxes = document.querySelectorAll('.row-checkbox');
+                const indicesToDelete = [];
 
-                    checkboxes.forEach((checkbox, index) => {
-                        if (checkbox.checked && currentTransactions[index] && currentTransactions[index].id) {
-                            batch.delete(db.collection("transactions").doc(currentTransactions[index].id));
-                            deleteCount++;
-                        }
-                    });
+                checkboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked) {
+                        indicesToDelete.push(index);
+                    }
+                });
 
-                    // Firestore에서 일괄 삭제
-                    await batch.commit();
-
-                    // 거래 내역 다시 로드
-                    await displayTransactions();
-
-                    alert(`${deleteCount}개의 거래가 삭제되었습니다!`);
-                } catch (error) {
-                    console.error("Firestore 삭제 실패:", error);
-                    alert('삭제 중 오류가 발생했습니다: ' + error.message);
+                // 後ろから削除 (インデックス変更を防止)
+                for (let i = indicesToDelete.length - 1; i >= 0; i--) {
+                    accountingData[currentYear][currentMonth].splice(indicesToDelete[i], 1);
                 }
+
+                // 日付順でソート
+                sortTransactionsByDate(currentYear, currentMonth);
+
+                // ローカルストレージを更新
+                localStorage.setItem('accountingData', JSON.stringify(accountingData));
+
+                // テーブルを再描画
+                displayTransactions();
+
+                alert(`${selectedCount}件の取引が削除されました！(${selectedCount}개의 거래가 삭제되었습니다!)`);
             }
         }
 
 
-        // ===== 월말 합계 계산 및 표시 =====
+        // ===== 月末合計計算と表示 =====
 
-        // 이달의 총 수입, 총 지출, 잔액 계산 (transactions/previousBalance는 displayTransactions에서 이미 조회한 값을 재사용)
-        function updateSummary(transactions, previousBalance) {
-            // 총 수입과 총 지출 계산
-            let totalIncome = 0;  // 총 수입
-            let totalExpense = 0; // 총 지출
+        // 今月の総収入、総支出、残額を計算
+        function updateSummary() {
+            // 現在の月の取引データを取得
+            const transactions = (accountingData[currentYear] && accountingData[currentYear][currentMonth]) || [];
 
-            // 각 거래에 대해 수입/지출 합계 계산
+            // 総収入と総支出を計算
+            let totalIncome = 0;  // 総収入
+            let totalExpense = 0; // 総支出
+
+            // 各取引について収入/支出合計を計算
             transactions.forEach(transaction => {
                 if (transaction.type === 'income') {
-                    // 수입 합계에 추가
+                    // 収入合計に追加
                     totalIncome += transaction.amount;
                 } else {
-                    // 지출 합계에 추가
+                    // 支出合計に追加
                     totalExpense += transaction.amount;
                 }
             });
 
-            // 전월 잔액 + 이달 순이익 = 월말 잔액
+            // 前月残額 + 今月純利益 = 月末残額
+            const previousBalance = getPreviousMonthBalance(currentYear, currentMonth);
             const currentBalance = totalIncome - totalExpense;
             let totalBalance = previousBalance + currentBalance;
 
-            // 합계를 화면에 표시
-            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + '원';
-            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + '원';
-            document.getElementById('totalBalance').innerText = totalBalance.toLocaleString() + '원';
+            // 合計を画面に表示
+            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString() + '円';
+            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString() + '円';
+            document.getElementById('totalBalance').innerText = totalBalance.toLocaleString() + '円';
         }
 
-        // ===== 다크모드 토글 함수 =====
+        // ===== ダークモード切り替え関数 =====
 
-        // 밝은 테마와 어두운 테마 전환
+        // 明るいテーマと暗いテーマの切り替え
         function toggleTheme() {
-            // body에 dark-mode 클래스 토글
+            // bodyにdark-modeクラスを切り替え
             document.body.classList.toggle('dark-mode');
 
-            // 사용자 선택을 로컬 스토리지에 저장
+            // ユーザーの選択をローカルストレージに保存
             if (document.body.classList.contains('dark-mode')) {
                 localStorage.setItem('theme', 'dark');
             } else {
@@ -1110,69 +1006,69 @@
             }
         }
 
-        // ===== 엑셀 다운로드 함수 (CSV 형식) =====
+        // ===== エクセルダウンロード関数 (CSV形式) =====
 
-        // 현재 월의 거래 내역을 CSV 파일로 다운로드
+        // 現在の月の取引履歴をCSVファイルでダウンロード
         function downloadExcel() {
-            // 현재 화면에 표시 중인 거래 데이터 재사용
-            const transactions = currentTransactions;
+            // 現在の月の取引データを取得
+            const transactions = (accountingData[currentYear] && accountingData[currentYear][currentMonth]) || [];
 
-            // 거래가 없으면 알림
+            // 取引がない場合はアラート
             if (transactions.length === 0) {
-                alert('다운로드할 거래 내역이 없습니다!');
+                alert('ダウンロードする取引履歴がありません！(다운로드할 거래 내역이 없습니다!)');
                 return;
             }
 
-            // 월 이름 배열 (1월 ~ 12월)
-            const monthNames = ['', '1월', '2월', '3월', '4월', '5월', '6월',
-                               '7월', '8월', '9월', '10월', '11월', '12월'];
+            // 月名配列 (1月 ~ 12月)
+            const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月',
+                               '7月', '8月', '9月', '10月', '11月', '12月'];
 
-            // CSV 데이터를 문자열로 생성
+            // CSVデータを文字列として生成
             let csvContent = '';
 
-            // 제목
-            csvContent += monthNames[currentMonth] + ' 회계장부\n\n';
+            // タイトル
+            csvContent += monthNames[currentMonth] + ' 会計帳簿\n\n';
 
-            // 컬럼 헤더
-            csvContent += '날짜,수입,지출,잔액,설명\n';
+            // カラムヘッダー
+            csvContent += '日付,収入,支出,残高,説明\n';
 
-            // 거래를 날짜 순서로 정렬
+            // 取引を日付順にソート
             const sortedTransactions = [...transactions].sort((a, b) =>
                 new Date(a.date) - new Date(b.date)
             );
 
-            // 누적 잔액
+            // 累積残額
             let runningBalance = 0;
 
-            // 각 거래를 CSV 행으로 변환
+            // 各取引をCSV行に変換
             sortedTransactions.forEach(transaction => {
-                // 거래 유형에 따라 잔액 계산
+                // 取引タイプに応じて残額を計算
                 if (transaction.type === 'income') {
                     runningBalance += transaction.amount;
                 } else {
                     runningBalance -= transaction.amount;
                 }
 
-                // 날짜 포맷팅
+                // 日付フォーマット
                 const dateObj = new Date(transaction.date + 'T00:00:00');
-                const formattedDate = (dateObj.getMonth() + 1) + '월 ' + dateObj.getDate() + '일';
+                const formattedDate = (dateObj.getMonth() + 1) + '月' + dateObj.getDate() + '日';
 
-                // 수입/지출 구분
+                // 収入/支出の区分
                 const income = transaction.type === 'income' ? transaction.amount : '';
                 const expense = transaction.type === 'expense' ? transaction.amount : '';
 
-                // CSV 행 추가 (쉼표로 구분)
+                // CSV行を追加 (カンマで区切り)
                 csvContent += formattedDate + ',' +
                              income + ',' +
                              expense + ',' +
                              runningBalance + ',' +
-                             '"' + transaction.desc + '"\n'; // 설명에는 큰따옴표로 감싸기
+                             '"' + transaction.desc + '"\n'; // 説明はダブルクォートで囲む
             });
 
-            // 빈 행 추가
+            // 空の行を追加
             csvContent += '\n';
 
-            // 합계 행 계산
+            // 合計行を計算
             let totalIncome = 0;
             let totalExpense = 0;
             transactions.forEach(transaction => {
@@ -1184,203 +1080,184 @@
             });
             const totalBalance = totalIncome - totalExpense;
 
-            // 합계 행 추가
-            csvContent += '합계,' + totalIncome + ',' + totalExpense + ',' + totalBalance + ',\n';
+            // 合計行を追加
+            csvContent += '合計,' + totalIncome + ',' + totalExpense + ',' + totalBalance + ',\n';
 
-            // Blob 객체 생성 (파일 데이터)
+            // Blobオブジェクトを作成 (ファイルデータ)
             const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
 
-            // 임시 다운로드 링크 생성
+            // 一時的なダウンロードリンクを作成
             const link = document.createElement('a');
 
-            // Blob 데이터를 URL로 변환
+            // BlobデータをURLに変換
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
 
-            // 파일명: "회계장부_1월.csv" 형식
-            const fileName = '회계장부_' + monthNames[currentMonth] + '.csv';
+            // ファイル名: "会計帳簿_1月.csv" 形式
+            const fileName = '会計帳簿_' + monthNames[currentMonth] + '.csv';
             link.setAttribute('download', fileName);
 
-            // 링크를 페이지에 추가 (보이지는 않음)
+            // リンクをページに追加 (表示されない)
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
 
-            // 클릭해서 다운로드 시작
+            // クリックしてダウンロード開始
             link.click();
 
-            // 링크 제거
+            // リンクを削除
             document.body.removeChild(link);
 
-            // 다운로드 완료 알림
-            alert(fileName + ' 파일이 다운로드 되었습니다!\n(엑셀에서도 열 수 있습니다)');
+            // ダウンロード完了アラート
+            alert(fileName + ' ファイルがダウンロードされました！\n(エクセルでも開くことができます)\n(' + fileName + ' 파일이 다운로드 되었습니다!\n(엑셀에서도 열 수 있습니다))');
         }
 
-        // ===== 통계 페이지로 이동 =====
+        // ===== 統計ページへの移動 =====
         function goToStats() {
             window.location.href = 'accounting-stats.html';
         }
 
-        // ===== 샘플 데이터 로드/클리어 (토글) =====
-        async function loadSampleData() {
-            try {
-                // Firestore에서 현재 데이터 확인
-                const snapshot = await db.collection("transactions").limit(1).get();
-                const hasData = !snapshot.empty;
+        // ===== サンプルデータ読み込み/クリア (トグル) =====
+        function loadSampleData() {
+            // 現在のデータがあるか確認
+            const hasData = Object.keys(accountingData).some(year =>
+                accountingData[year] && Object.keys(accountingData[year]).some(month =>
+                    accountingData[year][month] && accountingData[year][month].length > 0
+                )
+            );
 
-                if (hasData) {
-                    // 데이터가 있으면 올 클리어
-                    if (confirm('모든 데이터를 삭제하시겠습니까?')) {
-                        const batch = db.batch();
-                        const allDocs = await db.collection("transactions").get();
-
-                        allDocs.forEach((doc) => {
-                            batch.delete(doc.ref);
-                        });
-
-                        await batch.commit();
-                        alert('모든 데이터가 삭제되었습니다!');
-                        location.reload();
-                    }
-                } else {
-                // 데이터가 없으면 샘플 데이터 로드
+            if (hasData) {
+                // データがある場合はすべてクリア
+                if (confirm('すべてのデータを削除しますか？(모든 데이터를 삭제하시겠습니까?)')) {
+                    accountingData = {};
+                    localStorage.setItem('accountingData', JSON.stringify(accountingData));
+                    alert('すべてのデータが削除されました！(모든 데이터가 삭제되었습니다!)');
+                    location.reload();
+                }
+            } else {
+                // データがない場合はサンプルデータを読み込み
                 const sampleData = {
                     2026: {
-                        1: [ // 1월
-                            { date: '2026-01-02', type: 'income', amount: 5000000, desc: '1월 시공비 기성금' },
-                            { date: '2026-01-05', type: 'expense', amount: 800000, desc: '인건비 (일용직 10명)' },
-                            { date: '2026-01-05', type: 'expense', amount: 320000, desc: '연료비 (굴삭기, 덤프트럭)' },
-                            { date: '2026-01-08', type: 'expense', amount: 450000, desc: '자재비 (목재, 철근)' },
-                            { date: '2026-01-10', type: 'income', amount: 2000000, desc: '추가 시공비' },
-                            { date: '2026-01-12', type: 'expense', amount: 250000, desc: '장비 렌탈료' },
-                            { date: '2026-01-15', type: 'expense', amount: 150000, desc: '안전용품, 헬멧' },
-                            { date: '2026-01-18', type: 'expense', amount: 600000, desc: '인건비 (일용직 12명)' },
-                            { date: '2026-01-22', type: 'expense', amount: 180000, desc: '보험료' },
-                            { date: '2026-01-25', type: 'expense', amount: 250000, desc: '사무비 (전기, 통신료)' }
+                        1: [ // 1月
+                            { date: '2026-01-02', type: 'income', amount: 3000000, desc: '1月 시공비 기성금' },
+                            { date: '2026-01-05', type: 'expense', amount: 250000, desc: '인건비 (일용직 10명)' },
+                            { date: '2026-01-05', type: 'expense', amount: 60000, desc: '연료비 (굴삭기, 덤프트럭)' },
+                            { date: '2026-01-08', type: 'expense', amount: 120000, desc: '자재비 (목재, 철근)' },
+                            { date: '2026-01-10', type: 'income', amount: 1200000, desc: '추가 시공비' },
+                            { date: '2026-01-12', type: 'expense', amount: 80000, desc: '장비 렌탈료' },
+                            { date: '2026-01-15', type: 'expense', amount: 40000, desc: '안전용품, 헬멧' },
+                            { date: '2026-01-18', type: 'expense', amount: 180000, desc: '인건비 (일용직 12명)' },
+                            { date: '2026-01-22', type: 'expense', amount: 50000, desc: '보험료' },
+                            { date: '2026-01-25', type: 'expense', amount: 70000, desc: '사무비 (전기, 통신료)' }
                         ],
-                        2: [ // 2월
-                            { date: '2026-02-01', type: 'income', amount: 6000000, desc: '2월 시공비 기성금' },
-                            { date: '2026-02-03', type: 'expense', amount: 950000, desc: '인건비 (일용직 11명)' },
-                            { date: '2026-02-05', type: 'expense', amount: 400000, desc: '연료비 (굴삭기, 덤프트럭)' },
-                            { date: '2026-02-08', type: 'expense', amount: 520000, desc: '자재비 (시멘트, 모래)' },
-                            { date: '2026-02-10', type: 'income', amount: 1500000, desc: '추가 공사비' },
-                            { date: '2026-02-12', type: 'expense', amount: 280000, desc: '장비 렌탈료' },
-                            { date: '2026-02-15', type: 'expense', amount: 900000, desc: '인건비 (일용직 13명)' },
-                            { date: '2026-02-18', type: 'expense', amount: 200000, desc: '안전교육, 보험료' },
-                            { date: '2026-02-20', type: 'expense', amount: 180000, desc: '사무비' },
-                            { date: '2026-02-25', type: 'expense', amount: 150000, desc: '차량 유지보수' }
+                        2: [ // 2月
+                            { date: '2026-02-01', type: 'income', amount: 3500000, desc: '2월 시공비 기성금' },
+                            { date: '2026-02-03', type: 'expense', amount: 290000, desc: '인건비 (일용직 11명)' },
+                            { date: '2026-02-05', type: 'expense', amount: 75000, desc: '연료비 (굴삭기, 덤프트럭)' },
+                            { date: '2026-02-08', type: 'expense', amount: 140000, desc: '자재비 (시멘트, 모래)' },
+                            { date: '2026-02-10', type: 'income', amount: 900000, desc: '추가 공사비' },
+                            { date: '2026-02-12', type: 'expense', amount: 95000, desc: '장비 렌탈료' },
+                            { date: '2026-02-15', type: 'expense', amount: 270000, desc: '인건비 (일용직 13명)' },
+                            { date: '2026-02-18', type: 'expense', amount: 60000, desc: '안전교육, 보험료' },
+                            { date: '2026-02-20', type: 'expense', amount: 55000, desc: '사무비' },
+                            { date: '2026-02-25', type: 'expense', amount: 45000, desc: '차량 유지보수' }
                         ],
-                        3: [ // 3월
-                            { date: '2026-03-01', type: 'income', amount: 7000000, desc: '3월 시공비 기성금' },
-                            { date: '2026-03-02', type: 'expense', amount: 1200000, desc: '인건비 (일용직 15명)' },
-                            { date: '2026-03-05', type: 'expense', amount: 450000, desc: '연료비' },
-                            { date: '2026-03-08', type: 'expense', amount: 600000, desc: '자재비 (철골, 목재)' },
-                            { date: '2026-03-10', type: 'income', amount: 2500000, desc: '추가 공사비' },
-                            { date: '2026-03-12', type: 'expense', amount: 350000, desc: '장비 렌탈료 (크레인)' },
-                            { date: '2026-03-15', type: 'expense', amount: 1100000, desc: '인건비 (일용직 16명)' },
-                            { date: '2026-03-18', type: 'expense', amount: 300000, desc: '보험료, 안전용품' },
-                            { date: '2026-03-22', type: 'expense', amount: 250000, desc: '사무비 및 통신료' },
-                            { date: '2026-03-28', type: 'expense', amount: 180000, desc: '차량 연료비' }
+                        3: [ // 3月
+                            { date: '2026-03-01', type: 'income', amount: 4000000, desc: '3월 시공비 기성금' },
+                            { date: '2026-03-02', type: 'expense', amount: 350000, desc: '인건비 (일용직 15명)' },
+                            { date: '2026-03-05', type: 'expense', amount: 85000, desc: '연료비' },
+                            { date: '2026-03-08', type: 'expense', amount: 160000, desc: '자재비 (철골, 목재)' },
+                            { date: '2026-03-10', type: 'income', amount: 1500000, desc: '추가 공사비' },
+                            { date: '2026-03-12', type: 'expense', amount: 110000, desc: '장비 렌탈료 (크레인)' },
+                            { date: '2026-03-15', type: 'expense', amount: 330000, desc: '인건비 (일용직 16명)' },
+                            { date: '2026-03-18', type: 'expense', amount: 90000, desc: '보험료, 안전용품' },
+                            { date: '2026-03-22', type: 'expense', amount: 75000, desc: '사무비 및 통신료' },
+                            { date: '2026-03-28', type: 'expense', amount: 55000, desc: '차량 연료비' }
                         ],
-                        4: [ // 4월
-                            { date: '2026-04-01', type: 'income', amount: 6500000, desc: '4월 시공비 기성금' },
-                            { date: '2026-04-02', type: 'expense', amount: 1000000, desc: '인건비 (일용직 12명)' },
-                            { date: '2026-04-05', type: 'expense', amount: 380000, desc: '연료비' },
-                            { date: '2026-04-08', type: 'expense', amount: 480000, desc: '자재비' },
-                            { date: '2026-04-10', type: 'income', amount: 2000000, desc: '기성금 추가' },
-                            { date: '2026-04-12', type: 'expense', amount: 320000, desc: '장비 렌탈료' },
-                            { date: '2026-04-15', type: 'expense', amount: 950000, desc: '인건비 (일용직 14명)' },
-                            { date: '2026-04-18', type: 'expense', amount: 280000, desc: '보험료, 안전용품' },
-                            { date: '2026-04-22', type: 'expense', amount: 200000, desc: '사무비' },
-                            { date: '2026-04-28', type: 'expense', amount: 150000, desc: '차량 유지비' }
+                        4: [ // 4月
+                            { date: '2026-04-01', type: 'income', amount: 3800000, desc: '4월 시공비 기성금' },
+                            { date: '2026-04-02', type: 'expense', amount: 300000, desc: '인건비 (일용직 12명)' },
+                            { date: '2026-04-05', type: 'expense', amount: 70000, desc: '연료비' },
+                            { date: '2026-04-08', type: 'expense', amount: 130000, desc: '자재비' },
+                            { date: '2026-04-10', type: 'income', amount: 1200000, desc: '기성금 추가' },
+                            { date: '2026-04-12', type: 'expense', amount: 100000, desc: '장비 렌탈료' },
+                            { date: '2026-04-15', type: 'expense', amount: 280000, desc: '인건비 (일용직 14명)' },
+                            { date: '2026-04-18', type: 'expense', amount: 85000, desc: '보험료, 안전용품' },
+                            { date: '2026-04-22', type: 'expense', amount: 60000, desc: '사무비' },
+                            { date: '2026-04-28', type: 'expense', amount: 45000, desc: '차량 유지비' }
                         ],
-                        5: [ // 5월
-                            { date: '2026-05-01', type: 'income', amount: 8000000, desc: '5월 시공비 기성금' },
-                            { date: '2026-05-03', type: 'expense', amount: 1300000, desc: '인건비 (일용직 17명)' },
-                            { date: '2026-05-05', type: 'expense', amount: 520000, desc: '연료비' },
-                            { date: '2026-05-08', type: 'expense', amount: 700000, desc: '자재비 (폐기물 처리)' },
-                            { date: '2026-05-12', type: 'income', amount: 3000000, desc: '추가 공사비' },
-                            { date: '2026-05-12', type: 'expense', amount: 400000, desc: '장비 렌탈료 (크레인)' },
-                            { date: '2026-05-15', type: 'expense', amount: 1200000, desc: '인건비 (일용직 18명)' },
-                            { date: '2026-05-18', type: 'expense', amount: 350000, desc: '보험료, 의료용품' },
-                            { date: '2026-05-22', type: 'expense', amount: 250000, desc: '사무비 및 통신료' },
-                            { date: '2026-05-28', type: 'expense', amount: 180000, desc: '차량 연료 및 정비' }
+                        5: [ // 5月
+                            { date: '2026-05-01', type: 'income', amount: 4500000, desc: '5월 시공비 기성금' },
+                            { date: '2026-05-03', type: 'expense', amount: 380000, desc: '인건비 (일용직 17명)' },
+                            { date: '2026-05-05', type: 'expense', amount: 95000, desc: '연료비' },
+                            { date: '2026-05-08', type: 'expense', amount: 200000, desc: '자재비 (폐기물 처리)' },
+                            { date: '2026-05-12', type: 'income', amount: 1800000, desc: '추가 공사비' },
+                            { date: '2026-05-12', type: 'expense', amount: 120000, desc: '장비 렌탈료 (크레인)' },
+                            { date: '2026-05-15', type: 'expense', amount: 360000, desc: '인건비 (일용직 18명)' },
+                            { date: '2026-05-18', type: 'expense', amount: 100000, desc: '보험료, 의료용품' },
+                            { date: '2026-05-22', type: 'expense', amount: 75000, desc: '사무비 및 통신료' },
+                            { date: '2026-05-28', type: 'expense', amount: 55000, desc: '차량 연료 및 정비' }
                         ],
-                        6: [ // 6월
-                            { date: '2026-06-01', type: 'income', amount: 7500000, desc: '6월 시공비 기성금' },
-                            { date: '2026-06-03', type: 'expense', amount: 1100000, desc: '인건비 (일용직 13명)' },
-                            { date: '2026-06-05', type: 'expense', amount: 450000, desc: '연료비' },
-                            { date: '2026-06-08', type: 'expense', amount: 580000, desc: '자재비' },
-                            { date: '2026-06-10', type: 'income', amount: 2500000, desc: '추가 기성금' },
-                            { date: '2026-06-12', type: 'expense', amount: 350000, desc: '장비 렌탈료' },
-                            { date: '2026-06-15', type: 'expense', amount: 1050000, desc: '인건비 (일용직 15명)' },
-                            { date: '2026-06-18', type: 'expense', amount: 300000, desc: '보험료, 안전용품' },
-                            { date: '2026-06-22', type: 'expense', amount: 220000, desc: '사무비' },
-                            { date: '2026-06-28', type: 'expense', amount: 170000, desc: '차량 유지비' }
+                        6: [ // 6月
+                            { date: '2026-06-01', type: 'income', amount: 4200000, desc: '6월 시공비 기성금' },
+                            { date: '2026-06-03', type: 'expense', amount: 320000, desc: '인건비 (일용직 13명)' },
+                            { date: '2026-06-05', type: 'expense', amount: 80000, desc: '연료비' },
+                            { date: '2026-06-08', type: 'expense', amount: 150000, desc: '자재비' },
+                            { date: '2026-06-10', type: 'income', amount: 1500000, desc: '추가 기성금' },
+                            { date: '2026-06-12', type: 'expense', amount: 105000, desc: '장비 렌탈료' },
+                            { date: '2026-06-15', type: 'expense', amount: 310000, desc: '인건비 (일용직 15명)' },
+                            { date: '2026-06-18', type: 'expense', amount: 90000, desc: '보험료, 안전용품' },
+                            { date: '2026-06-22', type: 'expense', amount: 65000, desc: '사무비' },
+                            { date: '2026-06-28', type: 'expense', amount: 50000, desc: '차량 유지비' }
                         ],
-                        7: [ // 7월
-                            { date: '2026-07-01', type: 'income', amount: 6800000, desc: '7월 시공비 기성금' },
-                            { date: '2026-07-02', type: 'expense', amount: 950000, desc: '인건비 (일용직 11명)' },
-                            { date: '2026-07-05', type: 'expense', amount: 400000, desc: '연료비' },
-                            { date: '2026-07-08', type: 'expense', amount: 520000, desc: '자재비' },
-                            { date: '2026-07-12', type: 'income', amount: 2000000, desc: '기성금 추가' },
-                            { date: '2026-07-12', type: 'expense', amount: 300000, desc: '장비 렌탈료' },
-                            { date: '2026-07-15', type: 'expense', amount: 900000, desc: '인건비 (일용직 12명)' },
-                            { date: '2026-07-18', type: 'expense', amount: 280000, desc: '보험료, 안전용품' },
-                            { date: '2026-07-22', type: 'expense', amount: 200000, desc: '사무비' },
-                            { date: '2026-07-28', type: 'expense', amount: 150000, desc: '차량 유지비' }
+                        7: [ // 7月
+                            { date: '2026-07-01', type: 'income', amount: 3900000, desc: '7월 시공비 기성금' },
+                            { date: '2026-07-02', type: 'expense', amount: 280000, desc: '인건비 (일용직 11명)' },
+                            { date: '2026-07-05', type: 'expense', amount: 75000, desc: '연료비' },
+                            { date: '2026-07-08', type: 'expense', amount: 140000, desc: '자재비' },
+                            { date: '2026-07-12', type: 'income', amount: 1200000, desc: '기성금 추가' },
+                            { date: '2026-07-12', type: 'expense', amount: 90000, desc: '장비 렌탈료' },
+                            { date: '2026-07-15', type: 'expense', amount: 270000, desc: '인건비 (일용직 12명)' },
+                            { date: '2026-07-18', type: 'expense', amount: 85000, desc: '보험료, 안전용품' },
+                            { date: '2026-07-22', type: 'expense', amount: 60000, desc: '사무비' },
+                            { date: '2026-07-28', type: 'expense', amount: 45000, desc: '차량 유지비' }
                         ]
                     }
                 };
 
-                // Firestore에 샘플 데이터 저장
-                const batch = db.batch();
+                // サンプルデータを読み込み
+                accountingData = sampleData;
 
-                for (let year in sampleData) {
-                    for (let month in sampleData[year]) {
-                        sampleData[year][month].forEach((transaction) => {
-                            const docRef = db.collection("transactions").doc();
-                            batch.set(docRef, {
-                                year: parseInt(year),
-                                month: parseInt(month),
-                                date: transaction.date,
-                                type: transaction.type,
-                                amount: transaction.amount,
-                                desc: transaction.desc,
-                                createdAt: new Date()
-                            });
-                        });
-                    }
+                // すべての月のデータを日付順にソート
+                for (let month = 1; month <= 7; month++) {
+                    sortTransactionsByDate(2026, month);
                 }
 
-                await batch.commit();
-
-                // 년도 기본값을 2026으로 설정
+                // 年度の初期値を2026に設定
                 currentYear = 2026;
 
-                alert('샘플 데이터가 Firestore에 저장되었습니다! (2026년 1월~7월)\n\n다시 클릭하면 모든 데이터를 삭제할 수 있습니다.');
+                localStorage.setItem('accountingData', JSON.stringify(accountingData));
+
+                alert('サンプルデータが読み込まれました！ (2026年1月～7月)\n\n再度クリックするとすべてのデータを削除できます。(샘플 데이터가 로드되었습니다! (2026년 1월~7월)\n\n다시 클릭하면 모든 데이터를 삭제할 수 있습니다.)');
                 location.reload();
-                }
-            } catch (error) {
-                console.error("샘플 데이터 저장 실패:", error);
-                alert('샘플 데이터 저장 중 오류: ' + error.message);
             }
         }
 
-        // ===== 페이지 로드 시 초기화 =====
-        window.addEventListener('load', async function() {
-            // 저장된 테마 설정 불러오기
+        // ===== ページ読み込み時の初期化 =====
+
+        // ページが最初に読み込まれたときに実行
+        window.addEventListener('load', function() {
+            // 保存されたテーマ設定を読み込み
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
             }
 
-            // 날짜 선택 박스 초기화
+            // 日付選択ボックスを初期化
             initializeDateSelectors();
 
-            // 초기 거래 내역 표시
-            await displayTransactions();
+            // 初期取引履歴を表示
+            displayTransactions();
         });
-
     </script>
 </body>
 </html>
