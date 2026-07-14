@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会計帳簿(회계장부)</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         /* 전체 페이지 기본 설정 */
         * {
@@ -428,6 +429,266 @@
             background: #1f2937;
         }
 
+        /* ===== OCR 사진 입력 섹션 ===== */
+        .ocr-section {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px dashed #667eea;
+        }
+
+        body.dark-mode .ocr-section {
+            background: #1a2a3a;
+            border-color: #764ba2;
+        }
+
+        .ocr-section h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        body.dark-mode .ocr-section h3 {
+            color: #e0e0e0;
+        }
+
+        .ocr-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .ocr-file-input {
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .ocr-file-input {
+            background: #0f3460;
+            color: #e0e0e0;
+            border-color: #764ba2;
+        }
+
+        .ocr-file-input:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .ocr-recognize-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .ocr-recognize-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .ocr-recognize-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* OCR 미리보기 모달 */
+        .ocr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .ocr-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ocr-modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .ocr-modal-content {
+            background: #0f3460;
+        }
+
+        .ocr-modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .ocr-modal-header {
+            color: #e0e0e0;
+        }
+
+        .ocr-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .ocr-modal-close:hover {
+            color: #333;
+        }
+
+        body.dark-mode .ocr-modal-close:hover {
+            color: #e0e0e0;
+        }
+
+        .ocr-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .ocr-preview-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        body.dark-mode .ocr-preview-table thead {
+            background: #764ba2;
+        }
+
+        .ocr-preview-table th,
+        .ocr-preview-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        body.dark-mode .ocr-preview-table td {
+            border-color: #2a3f5f;
+            color: #e0e0e0;
+        }
+
+        .ocr-preview-table input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        body.dark-mode .ocr-preview-table input {
+            background: #1a2332;
+            color: #e0e0e0;
+            border-color: #2a3f5f;
+        }
+
+        .ocr-preview-table select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        body.dark-mode .ocr-preview-table select {
+            background: #1a2332;
+            color: #e0e0e0;
+            border-color: #2a3f5f;
+        }
+
+        .ocr-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .ocr-register-btn {
+            background: #51cf66;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .ocr-register-btn:hover {
+            background: #40c057;
+            transform: translateY(-2px);
+        }
+
+        .ocr-cancel-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .ocr-cancel-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        /* 로딩 애니메이션 */
+        .ocr-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .ocr-loading.active {
+            display: block;
+        }
+
+        .ocr-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: ocr-spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes ocr-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* 반응형 모바일 설정 */
         @media (max-width: 768px) {
             .container {
@@ -453,6 +714,20 @@
 
             table th, table td {
                 padding: 10px 8px;
+            }
+
+            .ocr-modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .ocr-input-group {
+                flex-direction: column;
+            }
+
+            .ocr-file-input,
+            .ocr-recognize-btn {
+                width: 100%;
             }
         }
     </style>
@@ -540,9 +815,60 @@
                 <input
                     type="text"
                     id="transactionDesc"
-                    placeholder="説明(설명) (例:人件費、燃料費)"
+                    placeholder="説明(설明) (例:人件費、燃料費)"
                     style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
                 >
+            </div>
+        </div>
+
+        <!-- 사진으로 입력 섹션 -->
+        <div class="ocr-section">
+            <h3>📷 사진으로 등록하기(사진 인식)</h3>
+            <div class="ocr-input-group">
+                <input
+                    type="file"
+                    id="ocrImageInput"
+                    accept="image/*"
+                    style="display: none;"
+                    onchange="handleImageSelect(event)"
+                >
+                <button class="ocr-file-input" onclick="document.getElementById('ocrImageInput').click()">
+                    📁 사진 선택(選択)
+                </button>
+                <button class="ocr-recognize-btn" id="ocrRecognizeBtn" onclick="startOCRRecognition()" disabled>
+                    🔍 사진 인식하기(認識)
+                </button>
+                <span id="ocrFileName" style="color: #667eea; font-weight: 600;">선택된 파일 없음</span>
+            </div>
+            <div class="ocr-loading" id="ocrLoading">
+                <div class="ocr-spinner"></div>
+                <p style="color: #667eea; margin-top: 10px;">사진 인식 중입니다... (사진이 크면 30초 이상 걸릴 수 있습니다)</p>
+            </div>
+        </div>
+
+        <!-- OCR 미리보기 모달 -->
+        <div class="ocr-modal" id="ocrModal">
+            <div class="ocr-modal-content">
+                <div class="ocr-modal-header">
+                    <span>📋 인식된 거래 확인(確認)</span>
+                    <button class="ocr-modal-close" onclick="closeOCRModal()">✕</button>
+                </div>
+                <table class="ocr-preview-table">
+                    <thead>
+                        <tr>
+                            <th>日(일)</th>
+                            <th>説明(설명)</th>
+                            <th>収入(수입)</th>
+                            <th>支出(지출)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ocrPreviewBody">
+                    </tbody>
+                </table>
+                <div class="ocr-modal-buttons">
+                    <button class="ocr-cancel-btn" onclick="closeOCRModal()">取消(취소)</button>
+                    <button class="ocr-register-btn" onclick="registerOCRTransactions()">登録(등록)</button>
+                </div>
             </div>
         </div>
 
@@ -1240,6 +1566,282 @@
                 alert('サンプルデータが読み込まれました！ (2026年1月～7月)\n\n再度クリックするとすべてのデータを削除できます。(샘플 데이터가 로드되었습니다! (2026년 1월~7월)\n\n다시 클릭하면 모든 데이터를 삭제할 수 있습니다.)');
                 location.reload();
             }
+        }
+
+        // ===== OCR 관련 함수 =====
+
+        // OCR에 사용할 전역 변수
+        let selectedImageFile = null;
+        let ocrRecognitionResult = null;
+
+        // 이미지 파일 선택 처리
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // 파일 형식 검증
+                if (!file.type.startsWith('image/')) {
+                    alert('이미지 파일을 선택해주세요! (이미지 파일만 업로드 가능)');
+                    return;
+                }
+
+                selectedImageFile = file;
+                document.getElementById('ocrFileName').innerText = `선택됨: ${file.name}`;
+                document.getElementById('ocrRecognizeBtn').disabled = false;
+            }
+        }
+
+        // OCR 인식 시작
+        async function startOCRRecognition() {
+            if (!selectedImageFile) {
+                alert('사진을 선택해주세요!');
+                return;
+            }
+
+            // 로딩 표시
+            document.getElementById('ocrLoading').classList.add('active');
+            document.getElementById('ocrRecognizeBtn').disabled = true;
+
+            try {
+                // 이미지를 Base64로 변환
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const imageData = e.target.result;
+
+                        // Tesseract.js를 사용한 OCR
+                        const result = await Tesseract.recognize(
+                            imageData,
+                            'jpn', // 일본어
+                            {
+                                logger: m => console.log('OCR Progress:', m)
+                            }
+                        );
+
+                        const ocrText = result.data.text;
+                        console.log('OCR 결과:', ocrText);
+
+                        // 텍스트 파싱
+                        const transactions = parseTransactionData(ocrText);
+
+                        if (transactions.length === 0) {
+                            alert('인식된 거래가 없습니다. 사진을 다시 선택해주세요.');
+                            document.getElementById('ocrLoading').classList.remove('active');
+                            document.getElementById('ocrRecognizeBtn').disabled = false;
+                            return;
+                        }
+
+                        // OCR 결과 저장
+                        ocrRecognitionResult = transactions;
+
+                        // 미리보기 표시
+                        showOCRPreview(transactions);
+
+                        // 로딩 숨기기
+                        document.getElementById('ocrLoading').classList.remove('active');
+                        document.getElementById('ocrRecognizeBtn').disabled = false;
+                    } catch (error) {
+                        console.error('OCR 처리 중 오류:', error);
+                        alert('사진 인식 중 오류가 발생했습니다. 다시 시도해주세요.');
+                        document.getElementById('ocrLoading').classList.remove('active');
+                        document.getElementById('ocrRecognizeBtn').disabled = false;
+                    }
+                };
+                reader.readAsDataURL(selectedImageFile);
+            } catch (error) {
+                console.error('파일 처리 오류:', error);
+                alert('파일 처리 중 오류가 발생했습니다.');
+                document.getElementById('ocrLoading').classList.remove('active');
+                document.getElementById('ocrRecognizeBtn').disabled = false;
+            }
+        }
+
+        // OCR 텍스트 파싱
+        function parseTransactionData(ocrText) {
+            const transactions = [];
+            const lines = ocrText.split('\n').filter(line => line.trim());
+
+            // 정규식으로 날짜, 금액, 설명 추출
+            // 형식 예: 5/7 (주)코스모-그린 1560000
+            //         5/7 다일리 440
+            // 월/일 | 설명 | 금액
+
+            let currentDay = null;
+
+            for (let line of lines) {
+                line = line.trim();
+
+                // 월/일 패턴 매칭 (예: 5/7, 08/15)
+                const dateMatch = line.match(/^(\d{1,2})\/(\d{1,2})/);
+                if (dateMatch) {
+                    currentDay = dateMatch[1] + '/' + dateMatch[2];
+                }
+
+                // 숫자 패턴 추출 (금액)
+                const amountMatch = line.match(/(\d+,?\d*)/);
+
+                if (amountMatch && currentDay) {
+                    const amount = parseInt(amountMatch[1].replace(/,/g, ''));
+
+                    // 설명 추출 (날짜와 금액 제거 후 남은 텍스트)
+                    let desc = line
+                        .replace(/^\d{1,2}\/\d{1,2}/, '') // 날짜 제거
+                        .replace(/(\d+,?\d*)/, '') // 금액 제거
+                        .trim();
+
+                    // 한 글자 이상의 설명이 있고 금액이 0보다 크면 추가
+                    if (desc.length > 0 && amount > 0) {
+                        // 수입/지출 자동 판단 (일반적으로 큰 금액은 수입, 작은 금액은 지출)
+                        // 또는 설명에 특정 키워드가 있는지 확인
+                        const type = (amount > 500000 || desc.includes('收入') || desc.includes('기성금'))
+                            ? 'income'
+                            : 'expense';
+
+                        transactions.push({
+                            day: currentDay,
+                            desc: desc,
+                            amount: amount,
+                            type: type
+                        });
+                    }
+                }
+            }
+
+            return transactions;
+        }
+
+        // OCR 미리보기 표시
+        function showOCRPreview(transactions) {
+            const tbody = document.getElementById('ocrPreviewBody');
+            tbody.innerHTML = '';
+
+            transactions.forEach((transaction, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="text" value="${transaction.day}"
+                            onchange="ocrRecognitionResult[${index}].day = this.value"
+                            placeholder="월/일">
+                    </td>
+                    <td>
+                        <input type="text" value="${transaction.desc}"
+                            onchange="ocrRecognitionResult[${index}].desc = this.value"
+                            placeholder="설명">
+                    </td>
+                    <td>
+                        <input type="text" value="${transaction.type === 'income' ? transaction.amount.toLocaleString() : ''}"
+                            onchange="ocrRecognitionResult[${index}].type = 'income'; ocrRecognitionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)"
+                            placeholder="수입">
+                    </td>
+                    <td>
+                        <input type="text" value="${transaction.type === 'expense' ? transaction.amount.toLocaleString() : ''}"
+                            onchange="ocrRecognitionResult[${index}].type = 'expense'; ocrRecognitionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)"
+                            placeholder="지출">
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 모달 표시
+            document.getElementById('ocrModal').classList.add('active');
+        }
+
+        // OCR 미리보기 모달 닫기
+        function closeOCRModal() {
+            document.getElementById('ocrModal').classList.remove('active');
+            ocrRecognitionResult = null;
+            selectedImageFile = null;
+            document.getElementById('ocrImageInput').value = '';
+            document.getElementById('ocrFileName').innerText = '선택된 파일 없음';
+            document.getElementById('ocrRecognizeBtn').disabled = true;
+        }
+
+        // OCR 거래 일괄 등록
+        function registerOCRTransactions() {
+            if (!ocrRecognitionResult || ocrRecognitionResult.length === 0) {
+                alert('등록할 거래가 없습니다.');
+                return;
+            }
+
+            // 현재 선택된 연도/월 확인
+            if (!currentYear || !currentMonth) {
+                alert('먼저 연도와 월을 선택해주세요!');
+                return;
+            }
+
+            let successCount = 0;
+            let errorCount = 0;
+            let errors = [];
+
+            // 각 거래 등록
+            ocrRecognitionResult.forEach((transaction, index) => {
+                try {
+                    // 날짜 파싱 (월/일 → YYYY-MM-DD)
+                    const dayParts = transaction.day.split('/');
+                    if (dayParts.length !== 2) {
+                        throw new Error(`날짜 형식 오류: ${transaction.day}`);
+                    }
+
+                    const month = parseInt(dayParts[0]);
+                    const day = parseInt(dayParts[1]);
+
+                    if (month !== currentMonth) {
+                        errors.push(`${index + 1}번 거래: 현재 월(${currentMonth}월)과 다른 월(${month}월) 데이터는 등록할 수 없습니다.`);
+                        errorCount++;
+                        return;
+                    }
+
+                    const dateStr = `${currentYear}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+                    // 데이터 검증
+                    if (!transaction.desc || transaction.desc.trim().length === 0) {
+                        throw new Error('설명이 없습니다.');
+                    }
+                    if (!transaction.amount || transaction.amount <= 0) {
+                        throw new Error('금액이 0 이상이어야 합니다.');
+                    }
+
+                    // 데이터 구조 생성
+                    if (!accountingData[currentYear]) {
+                        accountingData[currentYear] = {};
+                    }
+                    if (!accountingData[currentYear][currentMonth]) {
+                        accountingData[currentYear][currentMonth] = [];
+                    }
+
+                    // 거래 추가
+                    accountingData[currentYear][currentMonth].push({
+                        date: dateStr,
+                        type: transaction.type,
+                        amount: transaction.amount,
+                        desc: transaction.desc
+                    });
+
+                    successCount++;
+                } catch (error) {
+                    console.error(`거래 ${index + 1} 처리 오류:`, error);
+                    errors.push(`${index + 1}번 거래: ${error.message}`);
+                    errorCount++;
+                }
+            });
+
+            // 날짜순 정렬
+            sortTransactionsByDate(currentYear, currentMonth);
+
+            // localStorage 저장
+            localStorage.setItem('accountingData', JSON.stringify(accountingData));
+
+            // 테이블 재렌더링
+            displayTransactions();
+
+            // 미리보기 모달 닫기
+            closeOCRModal();
+
+            // 결과 메시지
+            let message = `${successCount}개의 거래가 등록되었습니다!`;
+            if (errorCount > 0) {
+                message += `\n\n${errorCount}개의 거래에서 오류가 발생했습니다:\n${errors.join('\n')}`;
+            }
+            alert(message);
         }
 
         // ===== ページ読み込み時の初期化 =====
