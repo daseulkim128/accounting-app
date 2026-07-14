@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会計帳簿(회계장부)</title>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
         /* 전체 페이지 기본 설정 */
         * {
@@ -821,53 +822,58 @@
             </div>
         </div>
 
-        <!-- 사진으로 입력 섹션 -->
+        <!-- 엑셀/CSV 임포트 섹션 -->
         <div class="ocr-section">
-            <h3>📷 사진으로 등록하기(사진 인식)</h3>
+            <h3>📊 엑셀/CSV로 등록하기(エクセル/CSV インポート)</h3>
+            <div style="margin-bottom: 15px; padding: 15px; background: #fff9e6; border-radius: 8px; border-left: 4px solid #667eea;">
+                <p style="color: #333; font-size: 13px; margin: 0;">
+                    💡 <strong>엑셀/CSV 형식:</strong><br>
+                    1행: 헤더(월, 일, 설명, 수입, 지출 등)<br>
+                    2행부터: 데이터 (월, 일은 숫자만, 금액은 숫자만)
+                </p>
+            </div>
             <div class="ocr-input-group">
                 <input
                     type="file"
-                    id="ocrImageInput"
-                    accept="image/*"
+                    id="excelFileInput"
+                    accept=".xlsx,.xls,.csv"
                     style="display: none;"
-                    onchange="handleImageSelect(event)"
+                    onchange="handleExcelSelect(event)"
                 >
-                <button class="ocr-file-input" onclick="document.getElementById('ocrImageInput').click()">
-                    📁 사진 선택(選択)
+                <button class="ocr-file-input" onclick="document.getElementById('excelFileInput').click()">
+                    📁 파일 선택(選択)
                 </button>
-                <button class="ocr-recognize-btn" id="ocrRecognizeBtn" onclick="startOCRRecognition()" disabled>
-                    🔍 사진 인식하기(認識)
+                <button class="ocr-recognize-btn" id="excelParseBtn" onclick="parseExcelFile()" disabled>
+                    📖 파일 분석하기(分析)
                 </button>
-                <span id="ocrFileName" style="color: #667eea; font-weight: 600;">선택된 파일 없음</span>
-            </div>
-            <div class="ocr-loading" id="ocrLoading">
-                <div class="ocr-spinner"></div>
-                <p style="color: #667eea; margin-top: 10px;">사진 인식 중입니다... (사진이 크면 30초 이상 걸릴 수 있습니다)</p>
+                <span id="excelFileName" style="color: #667eea; font-weight: 600;">선택된 파일 없음</span>
             </div>
         </div>
 
-        <!-- OCR 미리보기 모달 -->
-        <div class="ocr-modal" id="ocrModal">
+        <!-- 엑셀 미리보기 모달 -->
+        <div class="ocr-modal" id="excelModal">
             <div class="ocr-modal-content">
                 <div class="ocr-modal-header">
-                    <span>📋 인식된 거래 확인(確認)</span>
-                    <button class="ocr-modal-close" onclick="closeOCRModal()">✕</button>
+                    <span>📋 임포트 데이터 확인(確認)</span>
+                    <button class="ocr-modal-close" onclick="closeExcelModal()">✕</button>
                 </div>
+                <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;" id="excelSummary"></div>
                 <table class="ocr-preview-table">
                     <thead>
                         <tr>
+                            <th>月(월)</th>
                             <th>日(일)</th>
                             <th>説明(설명)</th>
                             <th>収入(수입)</th>
                             <th>支出(지출)</th>
                         </tr>
                     </thead>
-                    <tbody id="ocrPreviewBody">
+                    <tbody id="excelPreviewBody">
                     </tbody>
                 </table>
                 <div class="ocr-modal-buttons">
-                    <button class="ocr-cancel-btn" onclick="closeOCRModal()">取消(취소)</button>
-                    <button class="ocr-register-btn" onclick="registerOCRTransactions()">登録(등록)</button>
+                    <button class="ocr-cancel-btn" onclick="closeExcelModal()">取消(취소)</button>
+                    <button class="ocr-register-btn" onclick="registerExcelTransactions()">登録(등록)</button>
                 </div>
             </div>
         </div>
@@ -1568,227 +1574,187 @@
             }
         }
 
-        // ===== OCR 관련 함수 =====
+        // ===== 엑셀/CSV 임포트 관련 함수 =====
 
-        // OCR에 사용할 전역 변수
-        let selectedImageFile = null;
-        let ocrRecognitionResult = null;
+        let selectedExcelFile = null;
+        let excelTransactionResult = null;
 
-        // 이미지 파일 선택 처리
-        function handleImageSelect(event) {
+        // 엑셀/CSV 파일 선택
+        function handleExcelSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                // 파일 형식 검증
-                if (!file.type.startsWith('image/')) {
-                    alert('이미지 파일을 선택해주세요! (이미지 파일만 업로드 가능)');
-                    return;
-                }
-
-                selectedImageFile = file;
-                document.getElementById('ocrFileName').innerText = `선택됨: ${file.name}`;
-                document.getElementById('ocrRecognizeBtn').disabled = false;
+                selectedExcelFile = file;
+                document.getElementById('excelFileName').innerText = `선택됨: ${file.name}`;
+                document.getElementById('excelParseBtn').disabled = false;
             }
         }
 
-        // OCR 인식 시작
-        async function startOCRRecognition() {
-            if (!selectedImageFile) {
-                alert('사진을 선택해주세요!');
+        // 엑셀/CSV 파일 분석
+        function parseExcelFile() {
+            if (!selectedExcelFile) {
+                alert('파일을 선택해주세요!');
                 return;
             }
 
-            // 로딩 표시
-            document.getElementById('ocrLoading').classList.add('active');
-            document.getElementById('ocrRecognizeBtn').disabled = true;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = e.target.result;
+                    let rows = [];
 
-            try {
-                // 이미지를 Base64로 변환
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        const imageData = e.target.result;
-
-                        // Tesseract.js를 사용한 OCR
-                        const result = await Tesseract.recognize(
-                            imageData,
-                            'jpn', // 일본어
-                            {
-                                logger: m => console.log('OCR Progress:', m)
-                            }
-                        );
-
-                        const ocrText = result.data.text;
-                        console.log('OCR 결과:', ocrText);
-
-                        // 텍스트 파싱
-                        const transactions = parseTransactionData(ocrText);
-
-                        if (transactions.length === 0) {
-                            const debugMsg = `OCR 인식 결과 (텍스트):\n\n${ocrText.substring(0, 500)}\n\n...\n\n인식된 거래가 없습니다.\n\n브라우저 콘솔(F12)을 열어서 상세 로그를 확인해주세요.`;
-                            alert(debugMsg);
-                            console.log('OCR 파싱 실패 - 인식된 거래 없음');
-                            document.getElementById('ocrLoading').classList.remove('active');
-                            document.getElementById('ocrRecognizeBtn').disabled = false;
-                            return;
-                        }
-
-                        // OCR 결과 저장
-                        ocrRecognitionResult = transactions;
-
-                        // 미리보기 표시
-                        showOCRPreview(transactions);
-
-                        // 로딩 숨기기
-                        document.getElementById('ocrLoading').classList.remove('active');
-                        document.getElementById('ocrRecognizeBtn').disabled = false;
-                    } catch (error) {
-                        console.error('OCR 처리 중 오류:', error);
-                        alert('사진 인식 중 오류가 발생했습니다. 다시 시도해주세요.');
-                        document.getElementById('ocrLoading').classList.remove('active');
-                        document.getElementById('ocrRecognizeBtn').disabled = false;
+                    if (selectedExcelFile.name.endsWith('.csv')) {
+                        // CSV 파싱 (Papa Parse)
+                        const parsed = Papa.parse(data, { header: false });
+                        rows = parsed.data.filter(row => row.some(cell => cell && cell.toString().trim()));
+                    } else {
+                        // 엑셀 파싱 (XLSX)
+                        const workbook = XLSX.read(data, { type: 'binary' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                     }
-                };
-                reader.readAsDataURL(selectedImageFile);
-            } catch (error) {
-                console.error('파일 처리 오류:', error);
-                alert('파일 처리 중 오류가 발생했습니다.');
-                document.getElementById('ocrLoading').classList.remove('active');
-                document.getElementById('ocrRecognizeBtn').disabled = false;
+
+                    console.log('파싱된 데이터:', rows);
+
+                    // 데이터 변환
+                    const transactions = parseExcelRows(rows);
+
+                    if (transactions.length === 0) {
+                        alert('임포트할 거래가 없습니다.\n\n형식: 월, 일, 설명, 수입(또는 지출)');
+                        return;
+                    }
+
+                    // 결과 저장
+                    excelTransactionResult = transactions;
+
+                    // 미리보기 표시
+                    showExcelPreview(transactions);
+                } catch (error) {
+                    console.error('파일 파싱 오류:', error);
+                    alert('파일 파싱 중 오류가 발생했습니다.\n\n지원 형식: .xlsx, .xls, .csv');
+                }
+            };
+
+            if (selectedExcelFile.name.endsWith('.csv')) {
+                reader.readAsText(selectedExcelFile);
+            } else {
+                reader.readAsBinaryString(selectedExcelFile);
             }
         }
 
-        // OCR 텍스트 파싱
-        function parseTransactionData(ocrText) {
+        // 엑셀 행 파싱
+        function parseExcelRows(rows) {
             const transactions = [];
-            const lines = ocrText.split('\n');
 
-            console.log('=== OCR 원본 텍스트 ===');
-            console.log(ocrText);
-            console.log('=== 라인별 분석 ===');
+            // 첫 번째 행은 헤더로 간주
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (!row || row.length < 4) continue;
 
-            let currentDay = null;
-            let previousDesc = '';
+                try {
+                    const month = parseInt(row[0]);
+                    const day = parseInt(row[1]);
+                    const desc = (row[2] || '').toString().trim();
 
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
+                    let amount = 0;
+                    let type = 'expense';
 
-                if (!line) continue;
+                    if (row.length >= 5) {
+                        // 형식 1: 수입과 지출이 분리
+                        const income = parseInt(row[3]) || 0;
+                        const expense = parseInt(row[4]) || 0;
 
-                console.log(`줄 ${i}: "${line}"`);
-
-                // 월/일 패턴 매칭 (예: 5/7, 08/15, 5 7 등)
-                const dateMatch = line.match(/(\d{1,2})\s*\/\s*(\d{1,2})|^(\d{1,2})\s+(\d{1,2})/);
-
-                if (dateMatch) {
-                    if (dateMatch[1] && dateMatch[2]) {
-                        currentDay = dateMatch[1] + '/' + dateMatch[2];
-                    } else if (dateMatch[3] && dateMatch[4]) {
-                        currentDay = dateMatch[3] + '/' + dateMatch[4];
-                    }
-                    console.log(`→ 날짜 감지: ${currentDay}`);
-
-                    // 날짜 뒤의 설명 추출
-                    previousDesc = line.replace(/^\d{1,2}\s*\/\s*\d{1,2}/, '').replace(/^\d{1,2}\s+\d{1,2}/, '').trim();
-                }
-
-                // 금액 추출 (6자리 이상의 숫자)
-                const amountMatches = line.match(/(\d{6,})/g);
-
-                if (amountMatches && currentDay) {
-                    amountMatches.forEach(amountStr => {
-                        const amount = parseInt(amountStr.replace(/,/g, ''));
-
-                        if (amount > 0) {
-                            // 설명이 현재 라인에 있으면 사용, 없으면 이전 라인의 설명 사용
-                            let desc = line.replace(/\d{6,}/g, '').trim();
-                            if (!desc || desc.length < 2) {
-                                desc = previousDesc;
-                            }
-
-                            if (!desc || desc.length < 1) {
-                                desc = '거래';
-                            }
-
-                            // 수입/지출 자동 판단
-                            // 큰 금액(50만원 이상)은 수입, 작은 금액은 지출
-                            const type = (amount >= 500000) ? 'income' : 'expense';
-
-                            console.log(`→ 거래 추가: ${currentDay} | ${desc} | ${amount}${type === 'income' ? '(수입)' : '(지출)'}`);
-
-                            transactions.push({
-                                day: currentDay,
-                                desc: desc,
-                                amount: amount,
-                                type: type
-                            });
-
-                            previousDesc = desc;
+                        if (income > 0) {
+                            amount = income;
+                            type = 'income';
+                        } else if (expense > 0) {
+                            amount = expense;
+                            type = 'expense';
                         }
+                    } else if (row.length >= 4) {
+                        // 형식 2: 하나의 금액만
+                        amount = parseInt(row[3]) || 0;
+                    }
+
+                    // 유효성 검사
+                    if (!month || !day || !desc || !amount) continue;
+                    if (month < 1 || month > 12 || day < 1 || day > 31) continue;
+
+                    transactions.push({
+                        month: month,
+                        day: day,
+                        desc: desc,
+                        amount: amount,
+                        type: type
                     });
+                } catch (error) {
+                    console.error(`행 ${i} 파싱 오류:`, error);
+                    continue;
                 }
             }
-
-            console.log('=== 최종 파싱 결과 ===');
-            console.log(transactions);
-            console.log(`총 ${transactions.length}개 거래 인식됨`);
 
             return transactions;
         }
 
-        // OCR 미리보기 표시
-        function showOCRPreview(transactions) {
-            const tbody = document.getElementById('ocrPreviewBody');
+        // 엑셀 미리보기
+        function showExcelPreview(transactions) {
+            const tbody = document.getElementById('excelPreviewBody');
             tbody.innerHTML = '';
 
             transactions.forEach((transaction, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
-                        <input type="text" value="${transaction.day}"
-                            onchange="ocrRecognitionResult[${index}].day = this.value"
-                            placeholder="월/일">
+                        <input type="number" value="${transaction.month}" min="1" max="12"
+                            onchange="excelTransactionResult[${index}].month = parseInt(this.value)">
+                    </td>
+                    <td>
+                        <input type="number" value="${transaction.day}" min="1" max="31"
+                            onchange="excelTransactionResult[${index}].day = parseInt(this.value)">
                     </td>
                     <td>
                         <input type="text" value="${transaction.desc}"
-                            onchange="ocrRecognitionResult[${index}].desc = this.value"
-                            placeholder="설명">
+                            onchange="excelTransactionResult[${index}].desc = this.value">
                     </td>
                     <td>
                         <input type="text" value="${transaction.type === 'income' ? transaction.amount.toLocaleString() : ''}"
-                            onchange="ocrRecognitionResult[${index}].type = 'income'; ocrRecognitionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)"
-                            placeholder="수입">
+                            onchange="excelTransactionResult[${index}].type = 'income'; excelTransactionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)">
                     </td>
                     <td>
                         <input type="text" value="${transaction.type === 'expense' ? transaction.amount.toLocaleString() : ''}"
-                            onchange="ocrRecognitionResult[${index}].type = 'expense'; ocrRecognitionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)"
-                            placeholder="지출">
+                            onchange="excelTransactionResult[${index}].type = 'expense'; excelTransactionResult[${index}].amount = parseInt(this.value.replace(/,/g, '') || 0)">
                     </td>
                 `;
                 tbody.appendChild(row);
             });
 
+            // 요약
+            const incomeTotal = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const expenseTotal = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            document.getElementById('excelSummary').innerText =
+                `총 ${transactions.length}개 거래 | 수입: ${incomeTotal.toLocaleString()}円 | 지출: ${expenseTotal.toLocaleString()}円`;
+
             // 모달 표시
-            document.getElementById('ocrModal').classList.add('active');
+            document.getElementById('excelModal').classList.add('active');
         }
 
-        // OCR 미리보기 모달 닫기
-        function closeOCRModal() {
-            document.getElementById('ocrModal').classList.remove('active');
-            ocrRecognitionResult = null;
-            selectedImageFile = null;
-            document.getElementById('ocrImageInput').value = '';
-            document.getElementById('ocrFileName').innerText = '선택된 파일 없음';
-            document.getElementById('ocrRecognizeBtn').disabled = true;
+        // 엑셀 모달 닫기
+        function closeExcelModal() {
+            document.getElementById('excelModal').classList.remove('active');
+            excelTransactionResult = null;
+            selectedExcelFile = null;
+            document.getElementById('excelFileInput').value = '';
+            document.getElementById('excelFileName').innerText = '선택된 파일 없음';
+            document.getElementById('excelParseBtn').disabled = true;
         }
 
-        // OCR 거래 일괄 등록
-        function registerOCRTransactions() {
-            if (!ocrRecognitionResult || ocrRecognitionResult.length === 0) {
+        // 엑셀 거래 등록
+        function registerExcelTransactions() {
+            if (!excelTransactionResult || excelTransactionResult.length === 0) {
                 alert('등록할 거래가 없습니다.');
                 return;
             }
 
-            // 현재 선택된 연도/월 확인
             if (!currentYear || !currentMonth) {
                 alert('먼저 연도와 월을 선택해주세요!');
                 return;
@@ -1798,35 +1764,26 @@
             let errorCount = 0;
             let errors = [];
 
-            // 각 거래 등록
-            ocrRecognitionResult.forEach((transaction, index) => {
+            excelTransactionResult.forEach((transaction, index) => {
                 try {
-                    // 날짜 파싱 (월/일 → YYYY-MM-DD)
-                    const dayParts = transaction.day.split('/');
-                    if (dayParts.length !== 2) {
-                        throw new Error(`날짜 형식 오류: ${transaction.day}`);
-                    }
-
-                    const month = parseInt(dayParts[0]);
-                    const day = parseInt(dayParts[1]);
+                    const month = parseInt(transaction.month);
+                    const day = parseInt(transaction.day);
 
                     if (month !== currentMonth) {
-                        errors.push(`${index + 1}번 거래: 현재 월(${currentMonth}월)과 다른 월(${month}월) 데이터는 등록할 수 없습니다.`);
+                        errors.push(`${index + 1}번: 현재 월(${currentMonth}월)과 다른 월(${month}월)`);
                         errorCount++;
                         return;
                     }
 
                     const dateStr = `${currentYear}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
-                    // 데이터 검증
                     if (!transaction.desc || transaction.desc.trim().length === 0) {
-                        throw new Error('설명이 없습니다.');
+                        throw new Error('설명 없음');
                     }
                     if (!transaction.amount || transaction.amount <= 0) {
-                        throw new Error('금액이 0 이상이어야 합니다.');
+                        throw new Error('금액 오류');
                     }
 
-                    // 데이터 구조 생성
                     if (!accountingData[currentYear]) {
                         accountingData[currentYear] = {};
                     }
@@ -1834,7 +1791,6 @@
                         accountingData[currentYear][currentMonth] = [];
                     }
 
-                    // 거래 추가
                     accountingData[currentYear][currentMonth].push({
                         date: dateStr,
                         type: transaction.type,
@@ -1844,28 +1800,19 @@
 
                     successCount++;
                 } catch (error) {
-                    console.error(`거래 ${index + 1} 처리 오류:`, error);
-                    errors.push(`${index + 1}번 거래: ${error.message}`);
+                    errors.push(`${index + 1}번: ${error.message}`);
                     errorCount++;
                 }
             });
 
-            // 날짜순 정렬
             sortTransactionsByDate(currentYear, currentMonth);
-
-            // localStorage 저장
             localStorage.setItem('accountingData', JSON.stringify(accountingData));
-
-            // 테이블 재렌더링
             displayTransactions();
+            closeExcelModal();
 
-            // 미리보기 모달 닫기
-            closeOCRModal();
-
-            // 결과 메시지
-            let message = `${successCount}개의 거래가 등록되었습니다!`;
+            let message = `${successCount}개 거래 등록 완료!`;
             if (errorCount > 0) {
-                message += `\n\n${errorCount}개의 거래에서 오류가 발생했습니다:\n${errors.join('\n')}`;
+                message += `\n${errorCount}개 오류:\n${errors.join('\n')}`;
             }
             alert(message);
         }
