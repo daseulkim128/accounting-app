@@ -1624,7 +1624,9 @@
                         const transactions = parseTransactionData(ocrText);
 
                         if (transactions.length === 0) {
-                            alert('인식된 거래가 없습니다. 사진을 다시 선택해주세요.');
+                            const debugMsg = `OCR 인식 결과 (텍스트):\n\n${ocrText.substring(0, 500)}\n\n...\n\n인식된 거래가 없습니다.\n\n브라우저 콘솔(F12)을 열어서 상세 로그를 확인해주세요.`;
+                            alert(debugMsg);
+                            console.log('OCR 파싱 실패 - 인식된 거래 없음');
                             document.getElementById('ocrLoading').classList.remove('active');
                             document.getElementById('ocrRecognizeBtn').disabled = false;
                             return;
@@ -1658,53 +1660,77 @@
         // OCR 텍스트 파싱
         function parseTransactionData(ocrText) {
             const transactions = [];
-            const lines = ocrText.split('\n').filter(line => line.trim());
+            const lines = ocrText.split('\n');
 
-            // 정규식으로 날짜, 금액, 설명 추출
-            // 형식 예: 5/7 (주)코스모-그린 1560000
-            //         5/7 다일리 440
-            // 월/일 | 설명 | 금액
+            console.log('=== OCR 원본 텍스트 ===');
+            console.log(ocrText);
+            console.log('=== 라인별 분석 ===');
 
             let currentDay = null;
+            let previousDesc = '';
 
-            for (let line of lines) {
-                line = line.trim();
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
 
-                // 월/일 패턴 매칭 (예: 5/7, 08/15)
-                const dateMatch = line.match(/^(\d{1,2})\/(\d{1,2})/);
+                if (!line) continue;
+
+                console.log(`줄 ${i}: "${line}"`);
+
+                // 월/일 패턴 매칭 (예: 5/7, 08/15, 5 7 등)
+                const dateMatch = line.match(/(\d{1,2})\s*\/\s*(\d{1,2})|^(\d{1,2})\s+(\d{1,2})/);
+
                 if (dateMatch) {
-                    currentDay = dateMatch[1] + '/' + dateMatch[2];
+                    if (dateMatch[1] && dateMatch[2]) {
+                        currentDay = dateMatch[1] + '/' + dateMatch[2];
+                    } else if (dateMatch[3] && dateMatch[4]) {
+                        currentDay = dateMatch[3] + '/' + dateMatch[4];
+                    }
+                    console.log(`→ 날짜 감지: ${currentDay}`);
+
+                    // 날짜 뒤의 설명 추출
+                    previousDesc = line.replace(/^\d{1,2}\s*\/\s*\d{1,2}/, '').replace(/^\d{1,2}\s+\d{1,2}/, '').trim();
                 }
 
-                // 숫자 패턴 추출 (금액)
-                const amountMatch = line.match(/(\d+,?\d*)/);
+                // 금액 추출 (6자리 이상의 숫자)
+                const amountMatches = line.match(/(\d{6,})/g);
 
-                if (amountMatch && currentDay) {
-                    const amount = parseInt(amountMatch[1].replace(/,/g, ''));
+                if (amountMatches && currentDay) {
+                    amountMatches.forEach(amountStr => {
+                        const amount = parseInt(amountStr.replace(/,/g, ''));
 
-                    // 설명 추출 (날짜와 금액 제거 후 남은 텍스트)
-                    let desc = line
-                        .replace(/^\d{1,2}\/\d{1,2}/, '') // 날짜 제거
-                        .replace(/(\d+,?\d*)/, '') // 금액 제거
-                        .trim();
+                        if (amount > 0) {
+                            // 설명이 현재 라인에 있으면 사용, 없으면 이전 라인의 설명 사용
+                            let desc = line.replace(/\d{6,}/g, '').trim();
+                            if (!desc || desc.length < 2) {
+                                desc = previousDesc;
+                            }
 
-                    // 한 글자 이상의 설명이 있고 금액이 0보다 크면 추가
-                    if (desc.length > 0 && amount > 0) {
-                        // 수입/지출 자동 판단 (일반적으로 큰 금액은 수입, 작은 금액은 지출)
-                        // 또는 설명에 특정 키워드가 있는지 확인
-                        const type = (amount > 500000 || desc.includes('收入') || desc.includes('기성금'))
-                            ? 'income'
-                            : 'expense';
+                            if (!desc || desc.length < 1) {
+                                desc = '거래';
+                            }
 
-                        transactions.push({
-                            day: currentDay,
-                            desc: desc,
-                            amount: amount,
-                            type: type
-                        });
-                    }
+                            // 수입/지출 자동 판단
+                            // 큰 금액(50만원 이상)은 수입, 작은 금액은 지출
+                            const type = (amount >= 500000) ? 'income' : 'expense';
+
+                            console.log(`→ 거래 추가: ${currentDay} | ${desc} | ${amount}${type === 'income' ? '(수입)' : '(지출)'}`);
+
+                            transactions.push({
+                                day: currentDay,
+                                desc: desc,
+                                amount: amount,
+                                type: type
+                            });
+
+                            previousDesc = desc;
+                        }
+                    });
                 }
             }
+
+            console.log('=== 최종 파싱 결과 ===');
+            console.log(transactions);
+            console.log(`총 ${transactions.length}개 거래 인식됨`);
 
             return transactions;
         }
